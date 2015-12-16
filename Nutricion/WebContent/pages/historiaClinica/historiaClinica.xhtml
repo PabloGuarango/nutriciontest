@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Pacientes</title>
+</h:head>
+<h:body>
+	<h:form id="frmPaciente">
+		<p:panel header="Paciente">
+
+			<p:outputPanel id="panelNuevo">
+				<p:panel header="Paciente Nuevo" rendered="#{pacienteBean.nuevo}">
+					<p:panelGrid columns="2">
+						<h:outputLabel value="Fecha:" style="font-weight: bold;" />
+						<p:calendar id="fecha"
+							value="#{pacienteBean.historiaClinica.fecha}" navigator="true"
+							pattern="dd-MM-yyyy" />
+					</p:panelGrid>
+					<p:separator />
+					<p:panelGrid columns="4">
+						<h:outputLabel value="Nombre: " style="font-weight: bold;" />
+						<p:inputText id="nombrePaciente"
+							value="#{pacienteBean.paciente.nombre}" required="true" />
+						<h:outputLabel value="Apellido:" style="font-weight: bold;" />
+						<p:inputText id="apellidoPaciente"
+							value="#{pacienteBean.paciente.apellido}" required="true" />
+						<h:outputLabel value="C.I.:" style="font-weight: bold;" />
+						<p:inputText id="cedula"
+							value="#{pacienteBean.paciente.cedulaIdentidad}" required="true" />
+						<h:outputLabel value="Telefono:" style="font-weight: bold;" />
+						<p:inputText id="telefono"
+							value="#{pacienteBean.paciente.telefono}" required="true" />
+						<h:outputLabel value="Fecha de Nacimiento:"
+							style="font-weight: bold;" />
+						<p:calendar id="fechaNacimiento"
+							value="#{pacienteBean.paciente.fechaNacimiento}" navigator="true"
+							pattern="dd-MM-yyyy" />
+						<h:outputLabel value="Edad" style="font-weight: bold;" />
+						<h:outputLabel value="#{pacienteBean.edad}" />
+						<h:outputLabel value="Sexo:" style="font-weight: bold;" />
+						<p:selectOneRadio id="sexo" value="#{pacienteBean.paciente.sexo}">
+							<f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+							<f:selectItem itemLabel="Femenino" itemValue="Femenino" />
+						</p:selectOneRadio>
+						<h:outputLabel value="Rol:" style="font-weight: bold;" />
+						<p:selectOneRadio id="rol" value="#{pacienteBean.paciente.rol}">
+							<f:selectItem itemLabel="Profesor" itemValue="Profesor" />
+							<f:selectItem itemLabel="Estudiante" itemValue="Estudiante" />
+							<f:selectItem itemLabel="Familiar" itemValue="Familiar" />
+							<f:selectItem itemLabel="Empleado" itemValue="Empleado" />
+						</p:selectOneRadio>
+					</p:panelGrid>
+					<p:separator />
+					<!-- 					informacionSubjetiva -->
+					<p:panelGrid columns="2" id="informacionSubjetiva">
+						<f:facet name="header">
+							<h:outputText value="Información Subjetiva"
+								style="font-weight: bold;" />
+						</f:facet>
+						<h:outputLabel value="Motivo de consulta:"
+							style="font-weight: bold;" for="motivo" />
+						<p:inputText id="motivo"
+							value="#{pacienteBean.datosMedicos.motivoDeConsulta}" />
+						<h:outputLabel value="Ejercicio:" style="font-weight: bold;" />
+						<p:selectOneRadio id="ejercicio" value="#{pacienteBean.ejercicio}">
+							<f:selectItem itemLabel="Si" itemValue="true" />
+							<f:selectItem itemLabel="No" itemValue="false" />
+							<p:ajax process="@this" event="change"
+								update=":frmPaciente:informacionSubjetiva"></p:ajax>
+						</p:selectOneRadio>
+						<h:outputLabel value="Tipo:" style="font-weight: bold;"
+							rendered="#{pacienteBean.ejercicio=='true'}" />
+						<p:inputText id="tipo"
+							value="#{pacienteBean.datosMedicos.ejercicioTipo}"
+							rendered="#{pacienteBean.ejercicio=='true'}" />
+						<h:outputLabel value="Veces:" style="font-weight: bold;"
+							rendered="#{pacienteBean.ejercicio=='true'}" />
+						<p:inputText id="veces"
+							value="#{pacienteBean.datosMedicos.ejercicioVeces}"
+							rendered="#{pacienteBean.ejercicio=='true'}" />
+						<h:outputLabel value="Duracion:" style="font-weight: bold;"
+							rendered="#{pacienteBean.ejercicio=='true'}" />
+						<p:inputText id="duracion"
+							value="#{pacienteBean.datosMedicos.ejercicioDuracion}"
+							rendered="#{pacienteBean.ejercicio=='true'}" />
+					</p:panelGrid>
+					<p:separator />
+					<!-- 					antecedentesPatologicosFamiliares -->
+					<p:panelGrid columns="1" id="antecedentesPatologicosFamiliares">
+						<f:facet name="header">
+							<h:outputText value="ANTECEDENTES PATOLÓGICOS FAMILIARES"
+								style="font-weight: bold;" />
+						</f:facet>
+						<p:commandButton value="Agregar Patologia"
+							id="btnAgregarPatologia"
+							action="#{pacienteBean.agregarPatologia}"
+							update=":frmPaciente:antecedentesPatologicosFamiliares"
+							process="@this" icon="ui-icon-plus" />
+						<p:dataTable value="#{pacienteBean.paciente.patologiaAsociadas}"
+							binding="#{pacienteBean.dtPatologia}" rowIndexVar="secuencial"
+							emptyMessage="" var="_patologia" paginator="true"
+							paginatorPosition="bottom" style="width:100%"
+							rendered="#{pacienteBean.paciente.patologiaAsociadas.size()>0}">
+							<p:column headerText="Nº">
+								<h:outputText value="#{secuencial+1}" />
+							</p:column>
+
+							<p:column headerText="Patologias Asociadas">
+								<p:selectOneMenu value="#{_patologia}" required="true">
+									<f:selectItem itemValue="" itemLabel="Seleccione..." />
+									<f:selectItems value="#{pacienteBean.listaPatologiaAsociada}"
+										var="_pat" itemLabel="#{_pat.nombre}" itemValue="#{_pat}" />
+								</p:selectOneMenu>
+							</p:column>
+
+							<p:column>
+								<p:commandButton id="btnEliminarPatologia"
+									action="#{pacienteBean.eliminarPatologia}" icon="ui-icon-trash"
+									title="Eliminar"
+									update=":frmPaciente:antecedentesPatologicosFamiliares"
+									process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<p:separator />
+					<!-- 					historialDietetico -->
+					<p:panelGrid columns="2" id="historialDietetico">
+						<f:facet name="header">
+							<h:outputText value="HISTORIA DIETÉTICA"
+								style="font-weight: bold;" />
+						</f:facet>
+						<h:outputLabel value="¿Cuántas comidas hace al día?"
+							style="font-weight: bold;" />
+						<p:inputText id="comidas"
+							value="#{pacienteBean.antecedenteAlimentario.vecesAlimenta}" />
+						<h:outputLabel value="¿Dónde?" style="font-weight: bold;" />
+						<p:inputText id="donde"
+							value="#{pacienteBean.antecedenteAlimentario.dondeAlimenta}" />
+						<h:outputLabel value="¿Quién prepara?" style="font-weight: bold;" />
+						<p:inputText id="quien"
+							value="#{pacienteBean.antecedenteAlimentario.quienPreparaAlimento}" />
+						<h:outputLabel value="Vive con" style="font-weight: bold;" />
+						<p:inputText id="vive"
+							value="#{pacienteBean.antecedenteAlimentario.quienPreparaAlimento}" />
+						<h:outputLabel value="Come entre comidas"
+							style="font-weight: bold;" />
+						<p:selectOneRadio id="entrecomidas"
+							value="#{pacienteBean.entrecomidas}">
+							<f:selectItem itemLabel="Si" itemValue="true" />
+							<f:selectItem itemLabel="No" itemValue="false" />
+							<p:ajax process="@this" event="change"
+								update=":frmPaciente:historialDietetico"></p:ajax>
+						</p:selectOneRadio>
+						<h:outputLabel value="¿Qué?" style="font-weight: bold;"
+							rendered="#{pacienteBean.entrecomidas=='true'}" />
+						<p:inputText id="que"
+							value="#{pacienteBean.antecedenteAlimentario.entrecomidas}"
+							rendered="#{pacienteBean.entrecomidas=='true'}" />
+						<h:outputLabel value="Apetito:" style="font-weight: bold;" />
+						<p:selectOneRadio id="apetito"
+							value="#{pacienteBean.antecedenteAlimentario.apetito}">
+							<f:selectItem itemLabel="Bueno" itemValue="Bueno" />
+							<f:selectItem itemLabel="Regular" itemValue="Regular" />
+							<f:selectItem itemLabel="Malo" itemValue="Malo" />
+						</p:selectOneRadio>
+
+						<h:outputLabel value="Alimentos Preferidos"
+							style="font-weight: bold;" />
+						<p:panelGrid columns="2">
+							<p:commandButton value="Agregar"
+								action="#{pacienteBean.agregarAlimento}"
+								update=":frmPaciente:historialDietetico" process="@this"
+								icon="ui-icon-plus" />
+							<p:dataTable value="#{pacienteBean.listaAlimento}"
+								rendered="#{pacienteBean.listaAlimento.size()!=0}"
+								binding="#{pacienteBean.dtAlimento}" rowIndexVar="secuencial"
+								emptyMessage="" var="_alimento" paginator="true"
+								paginatorPosition="bottom" style="width:100%">
+								<p:column headerText="Nº">
+									<h:outputText value="#{secuencial+1}" />
+								</p:column>
+
+								<p:column headerText="Alimentos Preferidos">
+									<p:inputText value="#{_alimento.nombreAlimento}" />
+								</p:column>
+
+								<p:column>
+									<p:commandButton action="#{pacienteBean.eliminarAlimento}"
+										icon="ui-icon-trash" title="Eliminar"
+										update=":frmPaciente:historialDietetico" process="@this" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+
+						<h:outputLabel value="Alimentos No gustan/causan malestar"
+							style="font-weight: bold;" />
+						<p:panelGrid columns="2">
+							<p:commandButton value="Agregar"
+								action="#{pacienteBean.agregarAlimentoNoPreferido()}"
+								update=":frmPaciente:historialDietetico" process="@this"
+								icon="ui-icon-plus" />
+							<p:dataTable value="#{pacienteBean.listaAlimentoNoPreferido}"
+								rendered="#{pacienteBean.listaAlimentoNoPreferido.size()!=0}"
+								binding="#{pacienteBean.dtAlimentoNoPreferido}"
+								rowIndexVar="secuencial" emptyMessage="" var="_aliment"
+								paginator="true" paginatorPosition="bottom" style="width:100%">
+								<p:column headerText="Nº">
+									<h:outputText value="#{secuencial+1}" />
+								</p:column>
+
+								<p:column headerText="Alimentos No Preferidos">
+									<p:inputText value="#{_aliment.nombreAlimento}" />
+								</p:column>
+
+								<p:column>
+									<p:commandButton
+										action="#{pacienteBean.eliminarAlimentoNoPreferido()}"
+										icon="ui-icon-trash" title="Eliminar"
+										update=":frmPaciente:historialDietetico" process="@this" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+						<h:outputLabel value="Hábitos:" style="font-weight: bold;" />
+						<p:panelGrid columns="6">
+							<h:outputLabel value="Tabaco:" style="font-weight: bold;" />
+							<p:inputText value="#{pacienteBean.tabaco}" />
+							<h:outputLabel value="Alcohol:" style="font-weight: bold;" />
+							<p:inputText value="#{pacienteBean.alcohol}" />
+							<h:outputLabel value="Bebidas Azucaradas:"
+								style="font-weight: bold;" />
+							<p:inputText value="#{pacienteBean.bebidasAzucaradas}" />
+						</p:panelGrid>
+						<h:outputLabel value="Agua Sola (vasos/día):"
+							style="font-weight: bold;" />
+						<p:inputText
+							value="#{pacienteBean.antecedenteAlimentario.aguaSola}" />
+						<h:outputLabel value="Líquidos (vasos/día):"
+							style="font-weight: bold;" />
+						<p:inputText
+							value="#{pacienteBean.antecedenteAlimentario.liquidos}" />
+						<h:outputLabel value="Refrigerios:" style="font-weight: bold;" />
+						<p:panelGrid columns="2">
+							<p:commandButton value="Agregar"
+								action="#{pacienteBean.agregarRefrigerio}"
+								update=":frmPaciente:historialDietetico" process="@this"
+								icon="ui-icon-plus" />
+							<p:dataTable value="#{pacienteBean.listaRefrigerios}"
+								rendered="#{pacienteBean.listaRefrigerios.size()!=0}"
+								binding="#{pacienteBean.dtRefrigerio}" rowIndexVar="secuencial"
+								emptyMessage="" var="_refri" paginator="true"
+								paginatorPosition="bottom" style="width:100%">
+								<p:column headerText="Nº">
+									<h:outputText value="#{secuencial+1}" />
+								</p:column>
+
+								<p:column headerText="Refrigerios">
+									<p:inputText value="#{_refri.nombreAlimento}" />
+								</p:column>
+
+								<p:column>
+									<p:commandButton action="#{pacienteBean.eliminarRefrigerio()}"
+										icon="ui-icon-trash" title="Eliminar"
+										update=":frmPaciente:historialDietetico" process="@this" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</p:panelGrid>
+					<p:separator />
+					<!-- 					informacionObjetiva -->
+					<p:panelGrid columns="2" id="informacionObjetiva">
+						<f:facet name="header">
+							<h:outputText value="INFORMACION OBJETIVA"
+								style="font-weight: bold;" />
+						</f:facet>
+						<h:outputLabel value="Dx Medico:" style="font-weight: bold;" />
+						<p:inputText value="#{pacienteBean.datosMedicos.dxMedico}" />
+						<h:outputLabel value="Cirugias" style="font-weight: bold;" />
+						<p:selectOneRadio value="#{pacienteBean.cirugias}">
+							<f:selectItem itemLabel="Si" itemValue="true" />
+							<f:selectItem itemLabel="No" itemValue="false" />
+							<p:ajax process="@this" event="change"
+								update=":frmPaciente:informacionObjetiva"></p:ajax>
+						</p:selectOneRadio>
+						<p:commandButton value="Agregar"
+							action="#{pacienteBean.agregarCirugia}"
+							update=":frmPaciente:informacionObjetiva" process="@this"
+							icon="ui-icon-plus" rendered="#{pacienteBean.cirugias=='true'}" />
+						<p:dataTable value="#{pacienteBean.listaCirugia}"
+							rendered="#{pacienteBean.cirugias=='true'}"
+							binding="#{pacienteBean.dtCirugia}" rowIndexVar="secuencial"
+							emptyMessage="" var="_ciru" paginator="true"
+							paginatorPosition="bottom" style="width:100%">
+							<p:column headerText="Nº">
+								<h:outputText value="#{secuencial+1}" />
+							</p:column>
+
+							<p:column headerText="Refrigerios">
+								<p:inputText value="#{_ciru.descripcion}" />
+							</p:column>
+
+							<p:column>
+								<p:commandButton action="#{pacienteBean.eliminarCirugia()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmPaciente:informacionObjetiva" process="@this" />
+							</p:column>
+						</p:dataTable>
+						<h:outputLabel value="Medicamentos" style="font-weight: bold;" />
+						<p:panelGrid columns="2">
+							<p:commandButton value="Agregar"
+								action="#{pacienteBean.agregarMedicamento()}"
+								update=":frmPaciente:informacionObjetiva" process="@this"
+								icon="ui-icon-plus" />
+							<p:dataTable value="#{pacienteBean.listaMedicamento}"
+								rendered="#{pacienteBean.listaMedicamento.size()!=0}"
+								binding="#{pacienteBean.dtMedicamento}" rowIndexVar="secuencial"
+								emptyMessage="" var="_medica" paginator="true"
+								paginatorPosition="bottom" style="width:100%">
+								<p:column headerText="Nº">
+									<h:outputText value="#{secuencial+1}" />
+								</p:column>
+
+								<p:column headerText="Medicamentos">
+									<p:inputText value="#{_medica.descripcion}" />
+								</p:column>
+
+								<p:column>
+									<p:commandButton action="#{pacienteBean.eliminarMedicamento()}"
+										icon="ui-icon-trash" title="Eliminar"
+										update=":frmPaciente:informacionObjetiva" process="@this" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+						<h:outputLabel value="Suplementos" style="font-weight: bold;" />
+						<p:selectOneRadio value="#{pacienteBean.suplementos}">
+							<f:selectItem itemLabel="Si" itemValue="true" />
+							<f:selectItem itemLabel="No" itemValue="false" />
+							<p:ajax process="@this" event="change"
+								update=":frmPaciente:informacionObjetiva"></p:ajax>
+						</p:selectOneRadio>
+						<p:commandButton value="Agregar"
+							action="#{pacienteBean.agregarSuplemento()}"
+							update=":frmPaciente:informacionObjetiva" process="@this"
+							icon="ui-icon-plus"
+							rendered="#{pacienteBean.suplementos=='true'}" />
+						<p:dataTable value="#{pacienteBean.listaSuplementoNutricional}"
+							rendered="#{pacienteBean.suplementos=='true'}"
+							binding="#{pacienteBean.dtSuplemento}" rowIndexVar="secuencial"
+							emptyMessage="" var="_suplemento" paginator="true"
+							paginatorPosition="bottom" style="width:100%">
+							<p:column headerText="Nº">
+								<h:outputText value="#{secuencial+1}" />
+							</p:column>
+							<p:column headerText="Suplementos">
+								<p:inputText value="#{_suplemento.descripcion}" />
+							</p:column>
+							<p:column>
+								<p:commandButton action="#{pacienteBean.eliminarSuplemento()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmPaciente:informacionObjetiva" process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<p:separator />
+					<p:panelGrid columns="2" id="antropometria">
+						<f:facet name="header">
+							<h:outputText value="ANTROPOMETRIA" style="font-weight: bold;" />
+						</f:facet>
+						<h:outputLabel value="Fecha:" style="font-weight: bold;" />
+						<p:calendar id="fecha"
+							value="#{pacienteBean.historiaClinica.fecha}" navigator="true"
+							pattern="dd-MM-yyyy" />
+						<p:dataTable value="#{pacienteBean.paciente.historiaClinicas}"
+							binding="#{pacienteBean.dtHistoriaClinica}" rowIndexVar="secuencial"
+							emptyMessage="" var="_history" paginator="true"
+							paginatorPosition="bottom" style="width:100%">
+							<p:column headerText="Nº">
+								<h:outputText value="#{secuencial+1}" />
+							</p:column>
+							<p:column headerText="Suplementos">
+								<p:inputText value="#{_history.fecha}" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:panel>
+			</p:outputPanel>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

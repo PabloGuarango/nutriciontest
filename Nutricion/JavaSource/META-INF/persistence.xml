@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="Nutricion">
+		<jta-data-source>java:jboss/datasources/NutricionDS</jta-data-source>
+		<class>ec.edu.epn.nutricion.entities.Alimento</class>
+		<class>ec.edu.epn.nutricion.entities.AntecedenteAlimentario</class>
+		<class>ec.edu.epn.nutricion.entities.AntecedenteSalud</class>
+		<class>ec.edu.epn.nutricion.entities.Antropometria</class>
+		<class>ec.edu.epn.nutricion.entities.Cirugia</class>
+		<class>ec.edu.epn.nutricion.entities.DatosMedico</class>
+		<class>ec.edu.epn.nutricion.entities.FamiliarPaciente</class>
+		<class>ec.edu.epn.nutricion.entities.HistoriaClinica</class>
+		<class>ec.edu.epn.nutricion.entities.IntoleranciaAlergica</class>
+		<class>ec.edu.epn.nutricion.entities.Medicamento</class>
+		<class>ec.edu.epn.nutricion.entities.Paciente</class>
+		<class>ec.edu.epn.nutricion.entities.PatologiaAsociada</class>
+		<class>ec.edu.epn.nutricion.entities.ProblemaGastrointestinal</class>
+		<class>ec.edu.epn.nutricion.entities.SuplementoNutricional</class>
+
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>
+	</persistence-unit>
+</persistence>

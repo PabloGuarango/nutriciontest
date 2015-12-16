@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<title><ui:insert name="tituloPagina">Coloque el titulo de la pagina</ui:insert>
+	</title>
+	<h:outputScript name="validador.js"></h:outputScript>
+	<h:outputStylesheet library="css" name="bootstrap.min.css" />
+	<h:outputStylesheet library="css" name="style.css" />
+</h:head>
+
+<h:body bgcolor="#ffffff">
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<nav class="navbar navbar-default navbar-fixed-top"
+					role="navigation" >
+				<div class="navbar-header">
+
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span><span
+							class="icon-bar"></span><span class="icon-bar"></span><span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">NutriWeb </a>
+				</div>
+
+				<div class="collapse navbar-collapse"
+					id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Agenda</a></li>
+						<li class="dropdown"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown">Paciente<strong class="caret"></strong></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Registrar</a></li>
+								<li><a href="#">Actualizar</a></li>
+								<li class="divider"></li>
+								<li><a href="#">Registrar Historia clínica</a></li>
+								<li><a href="#">Actualizar Historia clinica</a></li>
+							</ul></li>
+					</ul>
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" />
+						</div>
+<!-- 						<button type="submit" class="btn btn-default">Buscar</button> -->
+					</form>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#">Registrar</a></li>
+						<li><a href="#">Entrar</a></li>
+						<li class="dropdown"><a href="#" class="dropdown-toggle"
+							data-toggle="dropdown">Opciones<strong class="caret"></strong></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Editar perfil</a></li>
+								<li><a href="#">Salir</a></li>
+							</ul></li>
+					</ul>
+				</div>
+
+				</nav>
+			</div>
+		</div>
+	</div>
+	<h:outputScript library="js" name="jquery.min.js" />
+	<h:outputScript library="js" name="bootstrap.min.js" />
+	<h:outputScript library="js" name="scripts.js" />
+	<div>
+	<ui:insert name="contenido">
+							Aqui va el contenido
+						</ui:insert>
+	
+	</div>
+	
+</h:body>
+
+</html>

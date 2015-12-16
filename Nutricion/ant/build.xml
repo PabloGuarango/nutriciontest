@@ -1,0 +1,161 @@
+<project name="AS2-jBoss7" basedir="../" default="deploy">
+
+	<!-- Configuraciones del proyecto -->
+	<property name="project.distname" value="AS2" />
+
+	<!-- Paths locales del sistema -->
+	<property file="${basedir}/ant/build.properties" />
+	<property name="webroot.dir" value="${basedir}/WebContent" />
+	<property name="webinf.dir" value="${webroot.dir}/WEB-INF" />
+	<property name="build.dir" value="build" />
+
+
+	<path id="compile.classpath">
+		<!-- classpath para JSF 2.0 -->
+		<pathelement path="${webinf.dir}/lib/commons-beanutils-1.8.2.jar" />
+		<pathelement path="${webinf.dir}/lib/commons-collections-3.2.1.jar" />
+		<pathelement path="${webinf.dir}/lib/commons-digester-1.7.jar" />
+		<pathelement path="${webinf.dir}/lib/commons-logging-1.1.jar" />
+		<pathelement path="${webinf.dir}/lib/jsf-facelets.jar" />
+		<pathelement path="${webinf.dir}/lib/jsf-tlds.jar" />
+		<pathelement path="${webinf.dir}/lib/jstl.jar" />
+		<pathelement path="${webinf.dir}/lib/standard.jar" />
+		<pathelement path="${webinf.dir}/lib/poi-3.6.jar" />
+		<pathelement path="${webinf.dir}/lib/iText-2.1.7.jar" />
+		<pathelement path="${webinf.dir}/lib/jasperreports-5.1.0.jar" />
+		<pathelement path="${webinf.dir}/lib/EJB_Polizas.jar" />
+		<pathelement path="${jboss.home}/modules/javax/faces/api/main/jboss-jsf-api_2.1_spec-2.0.1.Final.jar" />
+		<pathelement path="${jboss.home}/modules/javax/faces/api/1.2/jsf-api-1.2_15-jbossorg-2.jar" />
+		
+		<!-- Classpath primefaces -->
+		<pathelement path="${webinf.dir}/lib/primefaces-4.0.21.jar" />
+
+		<!-- Classpath del log -->
+		<pathelement path="${jboss.home}/modules/org/apache/log4j/main/log4j-1.2.16.jar" />
+
+		<!-- Classpath del JDOM -->
+		<pathelement path="${webinf.dir}/lib/jdom-2.0.4.jar" />
+		
+		<!-- Facturacion Electronica -->
+		<pathelement path="${webinf.dir}/lib/MITyCLibAPI-1.0.4.jar" />
+		<pathelement path="${webinf.dir}/lib/MITyCLibCert-1.0.4.jar" />
+		<pathelement path="${webinf.dir}/lib/MITyCLibTSA-1.0.4.jar" />
+		<pathelement path="${webinf.dir}/lib/MITyCLibXADES-1.0.4.jar" />
+		<pathelement path="${webinf.dir}/lib/axis-1.4.jar" />
+		<pathelement path="${jboss.home}/modules/javax/xml/rpc/api/main/jboss-jaxrpc-api_1.1_spec-1.0.0.Final.jar" />
+			
+		
+		<!-- Classpath adicional-->
+		<pathelement path="${jboss.home}/modules/javax/servlet/api/main/jboss-servlet-api_3.0_spec-1.0.0.Final.jar" />
+		<pathelement path="${jboss.home}/modules/javax/validation/api/main/validation-api-1.0.0.GA.jar" />
+
+		<!-- Classpath EJB -->
+		<pathelement path="${jboss.home}/modules/javax/ejb/api/main/jboss-ejb-api_3.1_spec-1.0.1.Final.jar" />
+		<pathelement path="${jboss.home}/modules/javax/interceptor/api/main/jboss-interceptors-api_1.1_spec-1.0.0.Final.jar" />
+		<pathelement path="${jboss.home}/modules/javax/inject/api/main/javax.inject-1.jar" />
+
+		<!-- Classpath JPA-hibernate -->
+		<pathelement path="${jboss.home}/modules/javax/persistence/api/main/hibernate-jpa-2.0-api-1.0.1.Final.jar" />
+		<pathelement path="${jboss.home}/modules/org/hibernate/main/hibernate-core-4.0.1.Final.jar" />
+
+		<pathelement path="${webinf.dir}/classes" />
+		<pathelement path="${webinf.dir}/classes/META-INF" />
+		<pathelement path="${classpath.external}" />
+		<pathelement path="${classpath}" />
+	</path>
+
+	<!-- Directorio de deployment -->
+	<property name="deploy.dir" value="${jboss.home}/standalone/deployments" />
+
+	<!-- Timestamp de archivos -->
+	<target name="prepare">
+		<tstamp />
+	</target>
+
+	<!-- Recursos y archivos de configuracion -->
+	<target name="resources">
+		
+		<mkdir dir="${webroot.dir}/applets" />
+		
+		<copy todir="${webroot.dir}/applets">
+			<fileset dir="applets">
+				<patternset>
+					<include name="**/*.jar" />
+				</patternset>
+			</fileset>
+		</copy>
+					
+		<copy todir="${webinf.dir}/classes" includeEmptyDirs="no">
+			<fileset dir="src">
+				<patternset>
+					<include name="**/*.conf" />
+					<include name="**/*.properties" />
+					<include name="**/*.xml" />
+				</patternset>
+			</fileset>
+		</copy>
+
+		<copy todir="${webinf.dir}/classes/META-INF">
+			<fileset dir="${webinf.dir}">
+				<patternset>
+					<include name="persistence.xml" />
+				</patternset>
+			</fileset>
+		</copy>
+
+	</target>
+
+	<!-- Normal build de la aplicacion -->
+	<target name="compile" depends="prepare,resources">
+		<javac srcdir="src" destdir="${webinf.dir}/classes" includeantruntime="false" encoding="ISO-8859-1" debug="true">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+	<!-- Limpiar el directorio build -->
+	<target name="clean" description="Elimina archivos del directorio build">
+		<delete dir="${webinf.dir}/classes" />
+		<mkdir dir="${webinf.dir}/classes" />
+	</target>
+
+	<!-- Build project -->
+	<target name="build" depends="prepare,compile" />
+	<target name="rebuild" depends="clean,prepare,compile" />
+
+	<!-- Crea el war de la aplicacion -->
+	<target name="war" depends="build">
+		<mkdir dir="${build.dir}" />
+		<war basedir="${webroot.dir}" warfile="${build.dir}/${project.distname}.war" webxml="${webinf.dir}/web.xml">
+			<exclude name="WEB-INF/${build.dir}/**" />
+			<exclude name="otros/**" />
+		</war>
+	</target>
+
+	<!-- Despliega el proyecto -->
+	<target name="deploy" depends="war">
+		<delete file="${deploy.dir}/${project.distname}.war" />
+		<delete dir="${deploy.dir}/${project.distname}" />
+		<copy file="${build.dir}/${project.distname}.war" todir="${deploy.dir}" />
+	</target>
+
+	<!-- Crear jar de AS2 -->
+	<target name="jar" depends="compile">
+		<mkdir dir="jar" />
+		<jar jarfile="jar/as2.jar" basedir="${webinf.dir}/classes" includes="**" />
+	</target>
+
+	<!-- Normal build de la aplicacion -->
+	<!-- <target name="compilePrintApplet">
+		<mkdir dir="${build.dir}/applets" />
+		<javac srcdir="applets" destdir="${build.dir}/applets" includeantruntime="false" encoding="ISO-8859-1">
+			<classpath refid="compile.classpath" />
+		</javac>		
+	</target>-->
+	
+	<!-- Crear jar de PrintApplet -->
+	<!--<target name="jarPrintApplet" depends="compilePrintApplet">
+		<mkdir dir="jar" />
+		<jar jarfile="${build.dir}/applets/print-applet-1.0.jar" basedir="${build.dir}/applets" includes="*.class" />
+	</target>-->
+	
+</project>
