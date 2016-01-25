@@ -59,10 +59,6 @@ public class Paciente implements Serializable {
 	@OneToMany(mappedBy = "paciente")
 	private List<Cirugia> cirugias;
 
-	// bi-directional many-to-one association to FamiliarPaciente
-	@OneToMany(mappedBy = "paciente")
-	private List<FamiliarPaciente> familiarPacientes;
-
 	// bi-directional many-to-one association to HistoriaClinica
 	@OneToMany(mappedBy = "paciente")
 	private List<HistoriaClinica> historiaClinicas;
@@ -76,6 +72,8 @@ public class Paciente implements Serializable {
 	@OneToMany(mappedBy = "paciente")
 	private List<PatologiaAsociada> patologiaAsociadas;
 
+	@Transient
+	private int edad;
 	public Paciente() {
 	}
 
@@ -172,29 +170,6 @@ public class Paciente implements Serializable {
 
 		return cirugia;
 	}
-
-	public List<FamiliarPaciente> getFamiliarPacientes() {
-		return this.familiarPacientes;
-	}
-
-	public void setFamiliarPacientes(List<FamiliarPaciente> familiarPacientes) {
-		this.familiarPacientes = familiarPacientes;
-	}
-
-	public FamiliarPaciente addFamiliarPaciente(FamiliarPaciente familiarPaciente) {
-		getFamiliarPacientes().add(familiarPaciente);
-		familiarPaciente.setPaciente(this);
-
-		return familiarPaciente;
-	}
-
-	public FamiliarPaciente removeFamiliarPaciente(FamiliarPaciente familiarPaciente) {
-		getFamiliarPacientes().remove(familiarPaciente);
-		familiarPaciente.setPaciente(null);
-
-		return familiarPaciente;
-	}
-
 	public List<HistoriaClinica> getHistoriaClinicas() {
 		return this.historiaClinicas;
 	}
@@ -311,6 +286,14 @@ public class Paciente implements Serializable {
 
 	public void setAntecedenteAlimentario(AntecedenteAlimentario antecedenteAlimentario) {
 		this.antecedenteAlimentario = antecedenteAlimentario;
+	}
+
+	public int getEdad() {
+		return edad;
+	}
+
+	public void setEdad(int edad) {
+		this.edad = edad;
 	}
 
 }

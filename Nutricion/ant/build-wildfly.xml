@@ -26,7 +26,7 @@
 		<pathelement path="${jboss.home}/modules/system/layers/base/javax/faces/api/main/jboss-jsf-api_2.2_spec-2.2.6.jar" />
 		
 		<!-- Classpath primefaces -->
-		<pathelement path="${webinf.dir}/lib/primefaces-4.0.jar" />
+		<pathelement path="${webinf.dir}/lib/primefaces-4.0.24.jar" />
 
 		<!-- Classpath del log -->
 		<pathelement path="${webinf.dir}/lib/log4j-1.2.17.jar" />

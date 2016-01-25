@@ -23,57 +23,57 @@ public class Antropometria implements Serializable {
 	private int idAntropometria;
 
 	@Column(name="CIRCUNFERENCIA_MUNECA")
-	private float circunferenciaMuneca;
+	private double circunferenciaMuneca;
 
 	@Column(name="CONSTITUCION_CORPORAL")
-	private float constitucionCorporal;
+	private String constitucionCorporal;
 
 	@Column(name="DIAMETRO_CADERA")
-	private float diametroCadera;
+	private double diametroCadera;
 
 	@Column(name="DIAMETRO_CINTURA")
-	private float diametroCintura;
+	private double diametroCintura;
 
 	@Column(name="EDAD_METABOLICA")
-	private float edadMetabolica;
+	private double edadMetabolica;
 
 	@Column(name="GASTO_ENERGETICO_BASAL")
-	private float gastoEnergeticoBasal;
+	private double gastoEnergeticoBasal;
 
 	@Column(name="INDICE_CINTURA_CADERA")
-	private float indiceCinturaCadera;
+	private double indiceCinturaCadera;
 
 	@Column(name="INDICE_MASA_CORPORAL")
-	private float indiceMasaCorporal;
+	private double indiceMasaCorporal;
 
 	@Column(name="NIVEL_GRASA_VISCERAL")
-	private float nivelGrasaVisceral;
+	private double nivelGrasaVisceral;
 
 	@Column(name="OBSERVACION_PLIEGUE")
-	private String observacionPliegue;
+	private String observacionPliegue="";
 
 	@Column(name="PERIMETRO_BRAQUIAL")
-	private float perimetroBraquial;
+	private double perimetroBraquial;
 
 	@Column(name="PESO_ACTUAL")
-	private float pesoActual;
+	private double pesoActual;
 
 	@Column(name="PESO_IDEAL")
-	private float pesoIdeal;
+	private double pesoIdeal;
 
 	@Column(name="PLIEGUE_TRICIPITAL")
-	private float pliegueTricipital;
+	private double pliegueTricipital;
 
 	@Column(name="PORCENTAJE_GRASA")
-	private float porcentajeGrasa;
+	private double porcentajeGrasa;
 
 	@Column(name="PORCENTAJE_MUSCULO_ESQUILETO")
-	private float porcentajeMusculoEsquileto;
+	private double porcentajeMusculoEsquileto;
 
 	@Column(name="RESERVA_PROTEICA")
-	private float reservaProteica;
+	private double reservaProteica;
 
-	private float talla;
+	private double talla;
 
 	//bi-directional many-to-one association to DatosMedico
 	@ManyToOne
@@ -95,75 +95,75 @@ public class Antropometria implements Serializable {
 		this.idAntropometria = idAntropometria;
 	}
 
-	public float getCircunferenciaMuneca() {
+	public double getCircunferenciaMuneca() {
 		return this.circunferenciaMuneca;
 	}
 
-	public void setCircunferenciaMuneca(float circunferenciaMuneca) {
+	public void setCircunferenciaMuneca(double circunferenciaMuneca) {
 		this.circunferenciaMuneca = circunferenciaMuneca;
 	}
 
-	public float getConstitucionCorporal() {
-		return this.constitucionCorporal;
+	public String getConstitucionCorporal() {
+		return constitucionCorporal;
 	}
 
-	public void setConstitucionCorporal(float constitucionCorporal) {
+	public void setConstitucionCorporal(String constitucionCorporal) {
 		this.constitucionCorporal = constitucionCorporal;
 	}
 
-	public float getDiametroCadera() {
+	public double getDiametroCadera() {
 		return this.diametroCadera;
 	}
 
-	public void setDiametroCadera(float diametroCadera) {
+	public void setDiametroCadera(double diametroCadera) {
 		this.diametroCadera = diametroCadera;
 	}
 
-	public float getDiametroCintura() {
+	public double getDiametroCintura() {
 		return this.diametroCintura;
 	}
 
-	public void setDiametroCintura(float diametroCintura) {
+	public void setDiametroCintura(double diametroCintura) {
 		this.diametroCintura = diametroCintura;
 	}
 
-	public float getEdadMetabolica() {
+	public double getEdadMetabolica() {
 		return this.edadMetabolica;
 	}
 
-	public void setEdadMetabolica(float edadMetabolica) {
+	public void setEdadMetabolica(double edadMetabolica) {
 		this.edadMetabolica = edadMetabolica;
 	}
 
-	public float getGastoEnergeticoBasal() {
+	public double getGastoEnergeticoBasal() {
 		return this.gastoEnergeticoBasal;
 	}
 
-	public void setGastoEnergeticoBasal(float gastoEnergeticoBasal) {
+	public void setGastoEnergeticoBasal(double gastoEnergeticoBasal) {
 		this.gastoEnergeticoBasal = gastoEnergeticoBasal;
 	}
 
-	public float getIndiceCinturaCadera() {
+	public double getIndiceCinturaCadera() {
 		return this.indiceCinturaCadera;
 	}
 
-	public void setIndiceCinturaCadera(float indiceCinturaCadera) {
+	public void setIndiceCinturaCadera(double indiceCinturaCadera) {
 		this.indiceCinturaCadera = indiceCinturaCadera;
 	}
 
-	public float getIndiceMasaCorporal() {
+	public double getIndiceMasaCorporal() {
 		return this.indiceMasaCorporal;
 	}
 
-	public void setIndiceMasaCorporal(float indiceMasaCorporal) {
+	public void setIndiceMasaCorporal(double indiceMasaCorporal) {
 		this.indiceMasaCorporal = indiceMasaCorporal;
 	}
 
-	public float getNivelGrasaVisceral() {
+	public double getNivelGrasaVisceral() {
 		return this.nivelGrasaVisceral;
 	}
 
-	public void setNivelGrasaVisceral(float nivelGrasaVisceral) {
+	public void setNivelGrasaVisceral(double nivelGrasaVisceral) {
 		this.nivelGrasaVisceral = nivelGrasaVisceral;
 	}
 
@@ -175,67 +175,67 @@ public class Antropometria implements Serializable {
 		this.observacionPliegue = observacionPliegue;
 	}
 
-	public float getPerimetroBraquial() {
+	public double getPerimetroBraquial() {
 		return this.perimetroBraquial;
 	}
 
-	public void setPerimetroBraquial(float perimetroBraquial) {
+	public void setPerimetroBraquial(double perimetroBraquial) {
 		this.perimetroBraquial = perimetroBraquial;
 	}
 
-	public float getPesoActual() {
+	public double getPesoActual() {
 		return this.pesoActual;
 	}
 
-	public void setPesoActual(float pesoActual) {
+	public void setPesoActual(double pesoActual) {
 		this.pesoActual = pesoActual;
 	}
 
-	public float getPesoIdeal() {
+	public double getPesoIdeal() {
 		return this.pesoIdeal;
 	}
 
-	public void setPesoIdeal(float pesoIdeal) {
-		this.pesoIdeal = pesoIdeal;
+	public void setPesoIdeal(double d) {
+		this.pesoIdeal = d;
 	}
 
-	public float getPliegueTricipital() {
+	public double getPliegueTricipital() {
 		return this.pliegueTricipital;
 	}
 
-	public void setPliegueTricipital(float pliegueTricipital) {
+	public void setPliegueTricipital(double pliegueTricipital) {
 		this.pliegueTricipital = pliegueTricipital;
 	}
 
-	public float getPorcentajeGrasa() {
+	public double getPorcentajeGrasa() {
 		return this.porcentajeGrasa;
 	}
 
-	public void setPorcentajeGrasa(float porcentajeGrasa) {
+	public void setPorcentajeGrasa(double porcentajeGrasa) {
 		this.porcentajeGrasa = porcentajeGrasa;
 	}
 
-	public float getPorcentajeMusculoEsquileto() {
+	public double getPorcentajeMusculoEsquileto() {
 		return this.porcentajeMusculoEsquileto;
 	}
 
-	public void setPorcentajeMusculoEsquileto(float porcentajeMusculoEsquileto) {
+	public void setPorcentajeMusculoEsquileto(double porcentajeMusculoEsquileto) {
 		this.porcentajeMusculoEsquileto = porcentajeMusculoEsquileto;
 	}
 
-	public float getReservaProteica() {
+	public double getReservaProteica() {
 		return this.reservaProteica;
 	}
 
-	public void setReservaProteica(float reservaProteica) {
+	public void setReservaProteica(double reservaProteica) {
 		this.reservaProteica = reservaProteica;
 	}
 
-	public float getTalla() {
+	public double getTalla() {
 		return this.talla;
 	}
 
-	public void setTalla(float talla) {
+	public void setTalla(double talla) {
 		this.talla = talla;
 	}
 

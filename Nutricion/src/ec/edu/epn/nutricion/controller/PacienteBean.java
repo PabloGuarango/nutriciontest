@@ -15,7 +15,6 @@ import ec.edu.epn.nutricion.entities.AntecedenteAlimentario;
 import ec.edu.epn.nutricion.entities.Antropometria;
 import ec.edu.epn.nutricion.entities.Cirugia;
 import ec.edu.epn.nutricion.entities.DatosMedico;
-import ec.edu.epn.nutricion.entities.FamiliarPaciente;
 import ec.edu.epn.nutricion.entities.HistoriaClinica;
 import ec.edu.epn.nutricion.entities.IntoleranciaAlergica;
 import ec.edu.epn.nutricion.entities.Medicamento;
@@ -41,8 +40,6 @@ public class PacienteBean {
 	@EJB
 	private ServicioGenerico<DatosMedico> servicioDatosMedico;
 	@EJB
-	private ServicioGenerico<FamiliarPaciente> servicioFamiliarPaciente;
-	@EJB
 	private ServicioGenerico<HistoriaClinica> servicioHistoriaClinica;
 	@EJB
 	private ServicioGenerico<IntoleranciaAlergica> servicioIntoleranciaAlergia;
@@ -60,7 +57,6 @@ public class PacienteBean {
 	private Antropometria antropometria;
 	private Cirugia cirugia;
 	private DatosMedico datosMedicos;
-	private FamiliarPaciente familiarPaciente;
 	private HistoriaClinica historiaClinica;
 	private IntoleranciaAlergica intoleranciaAlergia;
 	private Medicamento medicamento;
@@ -76,15 +72,14 @@ public class PacienteBean {
 	private List<Antropometria> listaAntropometria;
 	private List<Cirugia> listaCirugia;
 	private List<DatosMedico> listaDatosMedicos;
-	private List<FamiliarPaciente> listaFamiliarPaciente;
 	private List<HistoriaClinica> listaHistoriaClinica;
 	private List<IntoleranciaAlergica> listaIntoleranciaAlergia;
 	private List<Medicamento> listaMedicamento;
-	private List<PatologiaAsociada> listaPatologiaAsociada;
+	private List<PatologiaAsociada> listaPatologiaAsociadaFamiliar;
+	private List<PatologiaAsociada> listaPatologiaAsociadaPaciente;
 	private List<ProblemaGastrointestinal> listaProblemaGastrointestinal;
 	private List<SuplementoNutricional> listaSuplementoNutricional;
 
-	private int edad;
 	private boolean nuevo = true;
 	private String ejercicio = "false";
 	private String entrecomidas = "false";
@@ -92,8 +87,9 @@ public class PacienteBean {
 	private String alcohol;
 	private String bebidasAzucaradas;
 	private String cirugias = "false";
-	private String suplementos= "false";
-	private DataTable dtPatologia;
+	private String suplementos = "false";
+	private DataTable dtPatologiaFamiliar;
+	private DataTable dtPatologiaPaciente;
 	private DataTable dtAlimento;
 	private DataTable dtAlimentoNoPreferido;
 	private DataTable dtRefrigerio;
@@ -101,19 +97,201 @@ public class PacienteBean {
 	private DataTable dtMedicamento;
 	private DataTable dtSuplemento;
 	private DataTable dtHistoriaClinica;
+	private DataTable dtProblemasGatrointestinales;
+	private DataTable dtIntoleranciaAlergica;
 	@PostConstruct
 	public void init() {
 		paciente = new Paciente();
+		antropometria = new Antropometria();
+		datosMedicos=new DatosMedico();
+		antecedenteAlimentario=new AntecedenteAlimentario();
 		listaAlimento = new ArrayList<Alimento>();
 		listaAlimentoNoPreferido = new ArrayList<Alimento>();
 		listaRefrigerios = new ArrayList<Alimento>();
 		listaCirugia = new ArrayList<Cirugia>();
-		listaSuplementoNutricional= new ArrayList<SuplementoNutricional>();
-		listaMedicamento= new ArrayList<Medicamento>();
-		listaPatologiaAsociada = servicioPatologiaAsociada.obtenerListaCombo("PatologiaAsociada");
+		listaSuplementoNutricional = new ArrayList<SuplementoNutricional>();
+		listaMedicamento = new ArrayList<Medicamento>();
+		listaPatologiaAsociadaFamiliar = new ArrayList<PatologiaAsociada>();
+		listaPatologiaAsociadaPaciente = new ArrayList<PatologiaAsociada>();
+		listaProblemaGastrointestinal= new ArrayList<ProblemaGastrointestinal>();
+		listaIntoleranciaAlergia=new ArrayList<IntoleranciaAlergica>();
+		// listaPatologiaAsociada =
+		// servicioPatologiaAsociada.obtenerListaCombo("PatologiaAsociada");
+	}
+	public String guardar() {
+		if (paciente.getIdPaciente() != 0) {
+			servicioPaciente.guardar(paciente);
+		}
+		servicioDatosMedico.guardar(datosMedicos);
+		historiaClinica.setPaciente(paciente);
+		historiaClinica.setDatosMedico(datosMedicos);
+		servicioHistoriaClinica.guardar(historiaClinica);
+
+		for (PatologiaAsociada pa : listaPatologiaAsociadaFamiliar) {
+			pa.setPaciente(paciente);
+			servicioPatologiaAsociada.guardar(pa);
+			paciente.addPatologiaAsociada(pa);
+		}
+		for (PatologiaAsociada pa : listaPatologiaAsociadaPaciente) {
+			pa.setPaciente(paciente);
+			servicioPatologiaAsociada.guardar(pa);
+			paciente.addPatologiaAsociada(pa);
+		}
+		antecedenteAlimentario.setHabitos("T-"+tabaco+"A-"+alcohol+"B-"+bebidasAzucaradas);
+		servicioAntecedenteAlimentario.guardar(antecedenteAlimentario);
+		for (Alimento a : listaAlimento) {
+			a.setAntecedentesAlimentario(antecedenteAlimentario);
+			servicioAlimento.guardar(a);
+			antecedenteAlimentario.addAlimento(a);
+		}
+		for (Alimento a : listaAlimentoNoPreferido) {
+			a.setAntecedentesAlimentario(antecedenteAlimentario);
+			servicioAlimento.guardar(a);
+			antecedenteAlimentario.addAlimento(a);
+		}
+		for (Alimento a : listaRefrigerios) {
+			a.setAntecedentesAlimentario(antecedenteAlimentario);
+			servicioAlimento.guardar(a);
+			antecedenteAlimentario.addAlimento(a);
+		}
+		for (ProblemaGastrointestinal pg : listaProblemaGastrointestinal) {
+			pg.setAntecedentesAlimentario(antecedenteAlimentario);
+			servicioProblemaGastrointestinal.guardar(pg);
+			antecedenteAlimentario.addProblemaGastrointestinal(pg);
+		}
+		for (IntoleranciaAlergica ia : listaIntoleranciaAlergia) {
+			ia.setAntecedentesAlimentario(antecedenteAlimentario);
+			servicioIntoleranciaAlergia.guardar(ia);
+			antecedenteAlimentario.addIntoleranciaAlergica(ia);
+		}
+		for (Cirugia c : listaCirugia) {
+			c.setPaciente(paciente);
+			servicioCirugia.guardar(c);
+			paciente.addCirugia(c);
+		}
+		for (Medicamento m : listaMedicamento) {
+			m.setDatosMedico(datosMedicos);
+			servicioMedicamento.guardar(m);
+			datosMedicos.addMedicamento(m);
+		}
+		for (SuplementoNutricional sn : listaSuplementoNutricional) {
+			sn.setDatosMedico(datosMedicos);
+			servicioSuplementoNutricional.guardar(sn);
+			datosMedicos.addSuplementoNutricional(sn);
+		}
+		antropometria.setDatosMedico(datosMedicos);
+		servicioAntropometria.guardar(antropometria);
+		return null;
+	}
+	public String calcular() {
+		String estado1 = "";
+		String estado2 = "";
+		String estado3 = "";
+		if (antropometria.getTalla() > 0) {
+			antropometria.setIndiceMasaCorporal(antropometria.getPesoActual()
+					/ Math.pow((antropometria.getTalla() / 100), 2));
+			if (antropometria.getConstitucionCorporal().equals("Pequena")) {
+				antropometria.setPesoIdeal((antropometria.getTalla() - 100)
+						- ((antropometria.getTalla() - 100) * 0.1));
+			} else if (antropometria.getConstitucionCorporal()
+					.equals("Mediana")) {
+				antropometria.setPesoIdeal((antropometria.getTalla() - 100));
+			} else if (antropometria.getConstitucionCorporal().equals("Gruesa")) {
+				antropometria.setPesoIdeal((antropometria.getTalla() - 100)
+						+ ((antropometria.getTalla() - 100) * 0.1));
+			}
+			estado1 = "Paciente de edad: " + paciente.getEdad()
+					+ ", de contextura: "
+					+ antropometria.getConstitucionCorporal()
+					+ ", debe tener un peso optimo de: "
+					+ antropometria.getPesoIdeal();
+		}
+		if (antropometria.getPliegueTricipital() > 0) {
+			double reservaGrasa = 0;
+			if ("Masculino".equals(paciente.getSexo())) {
+				reservaGrasa = (antropometria.getPliegueTricipital() * 100) / 12.5;
+			} else if ("Femenino".equals(paciente.getSexo())) {
+				reservaGrasa = (antropometria.getPliegueTricipital() * 100) / 16.5;
+			}
+			if (reservaGrasa < 60) {
+				estado2 = "\nEstado de reservas grasas: DEPLECION SEVERA ("
+						+ reservaGrasa + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (reservaGrasa >= 60 && reservaGrasa <= 90) {
+				estado2 = "\nEstado de reservas grasas: DEPLECION MODERADA ("
+						+ reservaGrasa + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (reservaGrasa > 90 && reservaGrasa <= 110) {
+				estado2 = "\nEstado de reservas grasas:DEPLECION LEVE ("
+						+ reservaGrasa + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (reservaGrasa > 110) {
+				estado2 = "\nEstado de reservas grasas: RESERVAS GRASAS ELEVADAS ("
+						+ reservaGrasa + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			}
+		}
+		if (antropometria.getPliegueTricipital() > 0
+				&& antropometria.getPerimetroBraquial() > 0) {
+			double indicadorDeMasaProteicaMuscular = 0;
+			indicadorDeMasaProteicaMuscular = antropometria
+					.getPerimetroBraquial()
+					- (Math.PI * antropometria.getPliegueTricipital());
+			antropometria.setReservaProteica(Math
+					.round(indicadorDeMasaProteicaMuscular * 100.0) / 100.0);
+			indicadorDeMasaProteicaMuscular = 0;
+			if ("Masculino".equals(paciente.getSexo())) {
+				indicadorDeMasaProteicaMuscular = (antropometria
+						.getReservaProteica() * 100) / 25.3;
+				indicadorDeMasaProteicaMuscular = indicadorDeMasaProteicaMuscular < 0
+						? indicadorDeMasaProteicaMuscular * -1
+						: indicadorDeMasaProteicaMuscular;
+			} else if ("Femenino".equals(paciente.getSexo())) {
+				indicadorDeMasaProteicaMuscular = (antropometria
+						.getReservaProteica() * 100) / 23.2;
+				indicadorDeMasaProteicaMuscular = indicadorDeMasaProteicaMuscular < 0
+						? indicadorDeMasaProteicaMuscular * -1
+						: indicadorDeMasaProteicaMuscular;
+			}
+			if (indicadorDeMasaProteicaMuscular > 90) {
+				estado3 = "\nEstado de reservas de proteina: Normal("
+						+ indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (indicadorDeMasaProteicaMuscular >= 80
+					&& indicadorDeMasaProteicaMuscular <= 90) {
+				estado3 = "\nEstado de reservas de proteina: DESGASTE LEVE ("
+						+ indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (indicadorDeMasaProteicaMuscular >= 60
+					&& indicadorDeMasaProteicaMuscular <= 79) {
+				estado3 = "\nEstado de reservas de proteina: DESGASTE MODERADO ("
+						+ indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (indicadorDeMasaProteicaMuscular < 60) {
+				estado3 = "\nEstado de reservas de proteina: DESGASTE SEVERO ("
+						+ indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria
+						.setObservacionPliegue(estado1 + estado2 + estado3);
+			}
+		}
+		return null;
+	}
+	public String eliminardtIntoleranciaAlergica() {
+		IntoleranciaAlergica su = (IntoleranciaAlergica) dtIntoleranciaAlergica
+				.getRowData();
+		listaIntoleranciaAlergia.remove(su);
+		return null;
 	}
 	public String eliminarSuplemento() {
-		SuplementoNutricional su = (SuplementoNutricional) dtSuplemento.getRowData();
+		SuplementoNutricional su = (SuplementoNutricional) dtSuplemento
+				.getRowData();
 		listaSuplementoNutricional.remove(su);
 		return null;
 	}
@@ -145,6 +323,12 @@ public class PacienteBean {
 		listaAlimentoNoPreferido.remove(al);
 		return null;
 	}
+	public String eliminarProblemaGastrointestinal() {
+		ProblemaGastrointestinal problem = (ProblemaGastrointestinal) dtProblemasGatrointestinales
+				.getRowData();
+		listaAlimentoNoPreferido.remove(problem);
+		return null;
+	}
 	public String agregarSuplemento() {
 		SuplementoNutricional su = new SuplementoNutricional();
 		listaSuplementoNutricional.add(su);
@@ -160,13 +344,21 @@ public class PacienteBean {
 		listaCirugia.add(patologiaAsoc);
 		return null;
 	}
-
-	public String agregarPatologia() {
-		PatologiaAsociada patologiaAsoc = new PatologiaAsociada();
-		paciente.addPatologiaAsociada(patologiaAsoc);
+	public String agregarIntoleranciaAlergica() {
+		IntoleranciaAlergica into = new IntoleranciaAlergica();
+		listaIntoleranciaAlergia.add(into);
 		return null;
 	}
-
+	public String agregarPatologiaFamiliar() {
+		PatologiaAsociada patologiaAsoc = new PatologiaAsociada();
+		listaPatologiaAsociadaFamiliar.add(patologiaAsoc);
+		return null;
+	}
+	public String agregarPatologiaPaciente() {
+		PatologiaAsociada patologiaAsoc = new PatologiaAsociada();
+		listaPatologiaAsociadaPaciente.add(patologiaAsoc);
+		return null;
+	}
 	public String agregarAlimento() {
 		Alimento alimen = new Alimento();
 		alimen.setDescripcionAlimento("preferido");
@@ -180,7 +372,11 @@ public class PacienteBean {
 		listaRefrigerios.add(alimen);
 		return null;
 	}
-
+	public String agregarProblemasGastroinstestinales() {
+		ProblemaGastrointestinal problem = new ProblemaGastrointestinal();
+		listaProblemaGastrointestinal.add(problem);
+		return null;
+	}
 	public String agregarAlimentoNoPreferido() {
 		Alimento alimen = new Alimento();
 		alimen.setDescripcionAlimento("no preferido");
@@ -188,12 +384,18 @@ public class PacienteBean {
 		return null;
 	}
 
-	public String eliminarPatologia() {
-		PatologiaAsociada pt = (PatologiaAsociada) dtPatologia.getRowData();
-		paciente.removePatologiaAsociada(pt);
+	public String eliminarPatologiaFamiliar() {
+		PatologiaAsociada pt = (PatologiaAsociada) dtPatologiaFamiliar
+				.getRowData();
+		listaPatologiaAsociadaFamiliar.remove(pt);
 		return null;
 	}
-
+	public String eliminarPatologiaPaciente() {
+		PatologiaAsociada pt = (PatologiaAsociada) dtPatologiaPaciente
+				.getRowData();
+		listaPatologiaAsociadaPaciente.remove(pt);
+		return null;
+	}
 	public Paciente getPaciente() {
 		return paciente;
 	}
@@ -214,7 +416,8 @@ public class PacienteBean {
 		return antecedenteAlimentario;
 	}
 
-	public void setAntecedenteAlimentario(AntecedenteAlimentario antecedenteAlimentario) {
+	public void setAntecedenteAlimentario(
+			AntecedenteAlimentario antecedenteAlimentario) {
 		this.antecedenteAlimentario = antecedenteAlimentario;
 	}
 
@@ -240,14 +443,6 @@ public class PacienteBean {
 
 	public void setDatosMedicos(DatosMedico datosMedicos) {
 		this.datosMedicos = datosMedicos;
-	}
-
-	public FamiliarPaciente getFamiliarPaciente() {
-		return familiarPaciente;
-	}
-
-	public void setFamiliarPaciente(FamiliarPaciente familiarPaciente) {
-		this.familiarPaciente = familiarPaciente;
 	}
 
 	public HistoriaClinica getHistoriaClinica() {
@@ -286,7 +481,8 @@ public class PacienteBean {
 		return problemaGastrointestinal;
 	}
 
-	public void setProblemaGastrointestinal(ProblemaGastrointestinal problemaGastrointestinal) {
+	public void setProblemaGastrointestinal(
+			ProblemaGastrointestinal problemaGastrointestinal) {
 		this.problemaGastrointestinal = problemaGastrointestinal;
 	}
 
@@ -294,7 +490,8 @@ public class PacienteBean {
 		return suplementoNutricional;
 	}
 
-	public void setSuplementoNutricional(SuplementoNutricional suplementoNutricional) {
+	public void setSuplementoNutricional(
+			SuplementoNutricional suplementoNutricional) {
 		this.suplementoNutricional = suplementoNutricional;
 	}
 
@@ -318,7 +515,8 @@ public class PacienteBean {
 		return listaAntecedenteAlimentario;
 	}
 
-	public void setListaAntecedenteAlimentario(List<AntecedenteAlimentario> listaAntecedenteAlimentario) {
+	public void setListaAntecedenteAlimentario(
+			List<AntecedenteAlimentario> listaAntecedenteAlimentario) {
 		this.listaAntecedenteAlimentario = listaAntecedenteAlimentario;
 	}
 
@@ -346,19 +544,12 @@ public class PacienteBean {
 		this.listaDatosMedicos = listaDatosMedicos;
 	}
 
-	public List<FamiliarPaciente> getListaFamiliarPaciente() {
-		return listaFamiliarPaciente;
-	}
-
-	public void setListaFamiliarPaciente(List<FamiliarPaciente> listaFamiliarPaciente) {
-		this.listaFamiliarPaciente = listaFamiliarPaciente;
-	}
-
 	public List<HistoriaClinica> getListaHistoriaClinica() {
 		return listaHistoriaClinica;
 	}
 
-	public void setListaHistoriaClinica(List<HistoriaClinica> listaHistoriaClinica) {
+	public void setListaHistoriaClinica(
+			List<HistoriaClinica> listaHistoriaClinica) {
 		this.listaHistoriaClinica = listaHistoriaClinica;
 	}
 
@@ -366,7 +557,8 @@ public class PacienteBean {
 		return listaIntoleranciaAlergia;
 	}
 
-	public void setListaIntoleranciaAlergia(List<IntoleranciaAlergica> listaIntoleranciaAlergia) {
+	public void setListaIntoleranciaAlergia(
+			List<IntoleranciaAlergica> listaIntoleranciaAlergia) {
 		this.listaIntoleranciaAlergia = listaIntoleranciaAlergia;
 	}
 
@@ -378,19 +570,26 @@ public class PacienteBean {
 		this.listaMedicamento = listaMedicamento;
 	}
 
-	public List<PatologiaAsociada> getListaPatologiaAsociada() {
-		return listaPatologiaAsociada;
+	public List<PatologiaAsociada> getListaPatologiaAsociadaFamiliar() {
+		return listaPatologiaAsociadaFamiliar;
 	}
-
-	public void setListaPatologiaAsociada(List<PatologiaAsociada> listaPatologiaAsociada) {
-		this.listaPatologiaAsociada = listaPatologiaAsociada;
+	public void setListaPatologiaAsociadaFamiliar(
+			List<PatologiaAsociada> listaPatologiaAsociadaFamiliar) {
+		this.listaPatologiaAsociadaFamiliar = listaPatologiaAsociadaFamiliar;
 	}
-
+	public List<PatologiaAsociada> getListaPatologiaAsociadaPaciente() {
+		return listaPatologiaAsociadaPaciente;
+	}
+	public void setListaPatologiaAsociadaPaciente(
+			List<PatologiaAsociada> listaPatologiaAsociadaPaciente) {
+		this.listaPatologiaAsociadaPaciente = listaPatologiaAsociadaPaciente;
+	}
 	public List<ProblemaGastrointestinal> getListaProblemaGastrointestinal() {
 		return listaProblemaGastrointestinal;
 	}
 
-	public void setListaProblemaGastrointestinal(List<ProblemaGastrointestinal> listaProblemaGastrointestinal) {
+	public void setListaProblemaGastrointestinal(
+			List<ProblemaGastrointestinal> listaProblemaGastrointestinal) {
 		this.listaProblemaGastrointestinal = listaProblemaGastrointestinal;
 	}
 
@@ -398,16 +597,9 @@ public class PacienteBean {
 		return listaSuplementoNutricional;
 	}
 
-	public void setListaSuplementoNutricional(List<SuplementoNutricional> listaSuplementoNutricional) {
+	public void setListaSuplementoNutricional(
+			List<SuplementoNutricional> listaSuplementoNutricional) {
 		this.listaSuplementoNutricional = listaSuplementoNutricional;
-	}
-
-	public int getEdad() {
-		return edad;
-	}
-
-	public void setEdad(int edad) {
-		this.edad = edad;
 	}
 
 	public boolean isNuevo() {
@@ -432,14 +624,18 @@ public class PacienteBean {
 	public void setEntrecomidas(String entrecomidas) {
 		this.entrecomidas = entrecomidas;
 	}
-	public DataTable getDtPatologia() {
-		return dtPatologia;
+	public DataTable getDtPatologiaFamiliar() {
+		return dtPatologiaFamiliar;
 	}
-
-	public void setDtPatologia(DataTable dtPatologia) {
-		this.dtPatologia = dtPatologia;
+	public void setDtPatologiaFamiliar(DataTable dtPatologiaFamiliar) {
+		this.dtPatologiaFamiliar = dtPatologiaFamiliar;
 	}
-
+	public DataTable getDtPatologiaPaciente() {
+		return dtPatologiaPaciente;
+	}
+	public void setDtPatologiaPaciente(DataTable dtPatologiaPaciente) {
+		this.dtPatologiaPaciente = dtPatologiaPaciente;
+	}
 	public DataTable getDtAlimento() {
 		return dtAlimento;
 	}
@@ -452,7 +648,8 @@ public class PacienteBean {
 		return listaAlimentoNoPreferido;
 	}
 
-	public void setListaAlimentoNoPreferido(List<Alimento> listaAlimentoNoPreferido) {
+	public void setListaAlimentoNoPreferido(
+			List<Alimento> listaAlimentoNoPreferido) {
 		this.listaAlimentoNoPreferido = listaAlimentoNoPreferido;
 	}
 
@@ -543,5 +740,18 @@ public class PacienteBean {
 	public void setDtHistoriaClinica(DataTable dtHistoriaClinica) {
 		this.dtHistoriaClinica = dtHistoriaClinica;
 	}
-	
+	public DataTable getDtProblemasGatrointestinales() {
+		return dtProblemasGatrointestinales;
+	}
+	public void setDtProblemasGatrointestinales(
+			DataTable dtProblemasGatrointestinales) {
+		this.dtProblemasGatrointestinales = dtProblemasGatrointestinales;
+	}
+	public DataTable getDtIntoleranciaAlergica() {
+		return dtIntoleranciaAlergica;
+	}
+	public void setDtIntoleranciaAlergica(DataTable dtIntoleranciaAlergica) {
+		this.dtIntoleranciaAlergica = dtIntoleranciaAlergica;
+	}
+
 }
