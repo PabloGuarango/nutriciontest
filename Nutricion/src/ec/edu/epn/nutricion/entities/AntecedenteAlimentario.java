@@ -1,6 +1,7 @@
 package ec.edu.epn.nutricion.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -62,18 +63,9 @@ public class AntecedenteAlimentario implements Serializable {
 	@OneToMany(mappedBy="antecedenteAlimentario")
 	private List<Alimento> alimentos;
 
-	//bi-directional many-to-one association to Paciente
-	@ManyToOne
-	@JoinColumn(name="ID_PACIENTE")
-	private Paciente paciente;
-
 	//bi-directional many-to-one association to IntoleranciaAlergica
 	@OneToMany(mappedBy="antecedenteAlimentario")
 	private List<IntoleranciaAlergica> intoleranciaAlergicas;
-
-	//bi-directional many-to-one association to Paciente
-	@OneToMany(mappedBy="antecedenteAlimentario")
-	private List<Paciente> pacientes;
 
 	//bi-directional many-to-one association to ProblemaGastrointestinal
 	@OneToMany(mappedBy="antecedenteAlimentario")
@@ -180,6 +172,8 @@ public class AntecedenteAlimentario implements Serializable {
 	}
 
 	public List<Alimento> getAlimentos() {
+		if(this.alimentos==null)
+			this.alimentos=new ArrayList<Alimento>();
 		return this.alimentos;
 	}
 
@@ -190,7 +184,6 @@ public class AntecedenteAlimentario implements Serializable {
 	public Alimento addAlimento(Alimento alimento) {
 		getAlimentos().add(alimento);
 		alimento.setAntecedentesAlimentario(this);
-
 		return alimento;
 	}
 
@@ -201,15 +194,9 @@ public class AntecedenteAlimentario implements Serializable {
 		return alimento;
 	}
 
-	public Paciente getPaciente() {
-		return this.paciente;
-	}
-
-	public void setPaciente(Paciente paciente) {
-		this.paciente = paciente;
-	}
-
 	public List<IntoleranciaAlergica> getIntoleranciaAlergicas() {
+		if(this.intoleranciaAlergicas==null)
+			this.intoleranciaAlergicas=new ArrayList<IntoleranciaAlergica>();
 		return this.intoleranciaAlergicas;
 	}
 
@@ -231,29 +218,9 @@ public class AntecedenteAlimentario implements Serializable {
 		return intoleranciaAlergica;
 	}
 
-	public List<Paciente> getPacientes() {
-		return this.pacientes;
-	}
-
-	public void setPacientes(List<Paciente> pacientes) {
-		this.pacientes = pacientes;
-	}
-
-	public Paciente addPaciente(Paciente paciente) {
-		getPacientes().add(paciente);
-		paciente.setAntecedentesAlimentario(this);
-
-		return paciente;
-	}
-
-	public Paciente removePaciente(Paciente paciente) {
-		getPacientes().remove(paciente);
-		paciente.setAntecedentesAlimentario(null);
-
-		return paciente;
-	}
-
 	public List<ProblemaGastrointestinal> getProblemaGastrointestinals() {
+		if(this.problemaGastrointestinals==null)
+			this.problemaGastrointestinals=new ArrayList<ProblemaGastrointestinal>();
 		return this.problemaGastrointestinals;
 	}
 

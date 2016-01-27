@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -248,6 +248,8 @@ public class Antropometria implements Serializable {
 	}
 
 	public List<DatosMedico> getDatosMedicos() {
+		if(this.datosMedicos==null)
+			this.datosMedicos=new ArrayList<DatosMedico>();
 		return this.datosMedicos;
 	}
 

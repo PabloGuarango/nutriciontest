@@ -1,12 +1,15 @@
 package ec.edu.epn.nutricion.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import org.primefaces.component.datatable.DataTable;
 
@@ -23,6 +26,7 @@ import ec.edu.epn.nutricion.entities.PatologiaAsociada;
 import ec.edu.epn.nutricion.entities.ProblemaGastrointestinal;
 import ec.edu.epn.nutricion.entities.SuplementoNutricional;
 import ec.edu.epn.nutricion.model.servicio.ServicioGenerico;
+import ec.edu.epn.nutricion.utils.FuncionesUtiles;
 
 @ManagedBean
 @SessionScoped
@@ -80,7 +84,9 @@ public class PacienteBean {
 	private List<ProblemaGastrointestinal> listaProblemaGastrointestinal;
 	private List<SuplementoNutricional> listaSuplementoNutricional;
 
-	private boolean nuevo = true;
+	private boolean nuevo = false;
+	private boolean consulta = false;
+	private boolean listado = true;
 	private String ejercicio = "false";
 	private String entrecomidas = "false";
 	private String tabaco;
@@ -99,12 +105,43 @@ public class PacienteBean {
 	private DataTable dtHistoriaClinica;
 	private DataTable dtProblemasGatrointestinales;
 	private DataTable dtIntoleranciaAlergica;
+	private DataTable dtPacientes;
 	@PostConstruct
 	public void init() {
-		paciente = new Paciente();
+		listaPaciente = servicioPaciente.obtenerListaCombo("Paciente");
+	}
+	public String crear() {
+		System.out.println(paciente);
+		if (paciente == null) {
+			nuevo = true;
+			listado = false;
+			paciente = new Paciente();
+			limpiar();
+		} else {
+			limpiar();
+			listado = false;
+			nuevo = true;
+		}
+		return null;
+	}
+	public String consultarHistorias() {
+		if (paciente != null) {
+			listado = false;
+			cargar();
+		} else {
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Seleccione un paciente"));
+		}
+		return null;
+	}
+	private void cargar() {
+//		historiaClinica=paciente.getHistoriaClinicas();
+	}
+	private void limpiar() {
 		antropometria = new Antropometria();
-		datosMedicos=new DatosMedico();
-		antecedenteAlimentario=new AntecedenteAlimentario();
+		datosMedicos = new DatosMedico();
+		antecedenteAlimentario = new AntecedenteAlimentario();
+		historiaClinica = new HistoriaClinica();
 		listaAlimento = new ArrayList<Alimento>();
 		listaAlimentoNoPreferido = new ArrayList<Alimento>();
 		listaRefrigerios = new ArrayList<Alimento>();
@@ -113,15 +150,23 @@ public class PacienteBean {
 		listaMedicamento = new ArrayList<Medicamento>();
 		listaPatologiaAsociadaFamiliar = new ArrayList<PatologiaAsociada>();
 		listaPatologiaAsociadaPaciente = new ArrayList<PatologiaAsociada>();
-		listaProblemaGastrointestinal= new ArrayList<ProblemaGastrointestinal>();
-		listaIntoleranciaAlergia=new ArrayList<IntoleranciaAlergica>();
+		listaProblemaGastrointestinal = new ArrayList<ProblemaGastrointestinal>();
+		listaIntoleranciaAlergia = new ArrayList<IntoleranciaAlergica>();
 		// listaPatologiaAsociada =
 		// servicioPatologiaAsociada.obtenerListaCombo("PatologiaAsociada");
 	}
+	public String cancelar(){
+		nuevo = false;
+		consulta = false;
+		listado = true;
+		return null;
+	}
 	public String guardar() {
-		if (paciente.getIdPaciente() != 0) {
-			servicioPaciente.guardar(paciente);
-		}
+		calcular();
+		antecedenteAlimentario.setHabitos("~" + tabaco + "~" + alcohol + "~" + bebidasAzucaradas);
+		servicioAntecedenteAlimentario.guardar(antecedenteAlimentario);
+		paciente.setAntecedenteAlimentario(antecedenteAlimentario);
+		servicioPaciente.guardar(paciente);
 		servicioDatosMedico.guardar(datosMedicos);
 		historiaClinica.setPaciente(paciente);
 		historiaClinica.setDatosMedico(datosMedicos);
@@ -137,8 +182,7 @@ public class PacienteBean {
 			servicioPatologiaAsociada.guardar(pa);
 			paciente.addPatologiaAsociada(pa);
 		}
-		antecedenteAlimentario.setHabitos("T-"+tabaco+"A-"+alcohol+"B-"+bebidasAzucaradas);
-		servicioAntecedenteAlimentario.guardar(antecedenteAlimentario);
+
 		for (Alimento a : listaAlimento) {
 			a.setAntecedentesAlimentario(antecedenteAlimentario);
 			servicioAlimento.guardar(a);
@@ -181,30 +225,30 @@ public class PacienteBean {
 		}
 		antropometria.setDatosMedico(datosMedicos);
 		servicioAntropometria.guardar(antropometria);
+		limpiar();
 		return null;
 	}
 	public String calcular() {
 		String estado1 = "";
 		String estado2 = "";
 		String estado3 = "";
+		if (paciente.getFechaNacimiento() != null)
+			paciente.setEdad(FuncionesUtiles.calcularEdad(paciente.getFechaNacimiento(), new Date()));
 		if (antropometria.getTalla() > 0) {
-			antropometria.setIndiceMasaCorporal(antropometria.getPesoActual()
-					/ Math.pow((antropometria.getTalla() / 100), 2));
+			System.out.println(antropometria.getTalla());
+			antropometria
+					.setIndiceMasaCorporal(Math.round(antropometria.getPesoActual() / Math.pow((antropometria.getTalla() / 100), 2) * 100.0) / 100.0);
+			System.out.println("IMC<<<<<<" + antropometria.getIndiceMasaCorporal());
 			if (antropometria.getConstitucionCorporal().equals("Pequena")) {
-				antropometria.setPesoIdeal((antropometria.getTalla() - 100)
-						- ((antropometria.getTalla() - 100) * 0.1));
-			} else if (antropometria.getConstitucionCorporal()
-					.equals("Mediana")) {
+				antropometria.setPesoIdeal((antropometria.getTalla() - 100) - ((antropometria.getTalla() - 100) * 0.1));
+			} else if (antropometria.getConstitucionCorporal().equals("Mediana")) {
 				antropometria.setPesoIdeal((antropometria.getTalla() - 100));
 			} else if (antropometria.getConstitucionCorporal().equals("Gruesa")) {
-				antropometria.setPesoIdeal((antropometria.getTalla() - 100)
-						+ ((antropometria.getTalla() - 100) * 0.1));
+				antropometria.setPesoIdeal((antropometria.getTalla() - 100) + ((antropometria.getTalla() - 100) * 0.1));
 			}
-			estado1 = "Paciente de edad: " + paciente.getEdad()
-					+ ", de contextura: "
-					+ antropometria.getConstitucionCorporal()
-					+ ", debe tener un peso optimo de: "
-					+ antropometria.getPesoIdeal();
+			estado1 = "Paciente de edad: " + paciente.getEdad() + ", de contextura: " + antropometria.getConstitucionCorporal()
+					+ ", debe tener un peso optimo de: " + antropometria.getPesoIdeal();
+			antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 		}
 		if (antropometria.getPliegueTricipital() > 0) {
 			double reservaGrasa = 0;
@@ -213,85 +257,56 @@ public class PacienteBean {
 			} else if ("Femenino".equals(paciente.getSexo())) {
 				reservaGrasa = (antropometria.getPliegueTricipital() * 100) / 16.5;
 			}
+			System.out.println(paciente.getSexo());
+			System.out.println("reservaGrasaZZZZZ" + reservaGrasa);
 			if (reservaGrasa < 60) {
-				estado2 = "\nEstado de reservas grasas: DEPLECION SEVERA ("
-						+ reservaGrasa + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
+				estado2 = "\nEstado de reservas grasas: DEPLECION SEVERA (" + reservaGrasa + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 			} else if (reservaGrasa >= 60 && reservaGrasa <= 90) {
-				estado2 = "\nEstado de reservas grasas: DEPLECION MODERADA ("
-						+ reservaGrasa + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
+				estado2 = "\nEstado de reservas grasas: DEPLECION MODERADA (" + reservaGrasa + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 			} else if (reservaGrasa > 90 && reservaGrasa <= 110) {
-				estado2 = "\nEstado de reservas grasas:DEPLECION LEVE ("
-						+ reservaGrasa + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
+				estado2 = "\nEstado de reservas grasas:DEPLECION LEVE (" + reservaGrasa + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 			} else if (reservaGrasa > 110) {
-				estado2 = "\nEstado de reservas grasas: RESERVAS GRASAS ELEVADAS ("
-						+ reservaGrasa + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
+				estado2 = "\nEstado de reservas grasas: RESERVAS GRASAS ELEVADAS (" + reservaGrasa + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 			}
 		}
-		if (antropometria.getPliegueTricipital() > 0
-				&& antropometria.getPerimetroBraquial() > 0) {
+		if (antropometria.getPliegueTricipital() > 0 && antropometria.getPerimetroBraquial() > 0) {
 			double indicadorDeMasaProteicaMuscular = 0;
-			indicadorDeMasaProteicaMuscular = antropometria
-					.getPerimetroBraquial()
-					- (Math.PI * antropometria.getPliegueTricipital());
-			antropometria.setReservaProteica(Math
-					.round(indicadorDeMasaProteicaMuscular * 100.0) / 100.0);
+			indicadorDeMasaProteicaMuscular = Math.abs(antropometria.getPerimetroBraquial() - (Math.PI * antropometria.getPliegueTricipital()));
+			antropometria.setReservaProteica(Math.round(indicadorDeMasaProteicaMuscular * 100.0) / 100.0);
 			indicadorDeMasaProteicaMuscular = 0;
 			if ("Masculino".equals(paciente.getSexo())) {
-				indicadorDeMasaProteicaMuscular = (antropometria
-						.getReservaProteica() * 100) / 25.3;
-				indicadorDeMasaProteicaMuscular = indicadorDeMasaProteicaMuscular < 0
-						? indicadorDeMasaProteicaMuscular * -1
-						: indicadorDeMasaProteicaMuscular;
+				indicadorDeMasaProteicaMuscular = (antropometria.getReservaProteica() * 100) / 25.3;
+
 			} else if ("Femenino".equals(paciente.getSexo())) {
-				indicadorDeMasaProteicaMuscular = (antropometria
-						.getReservaProteica() * 100) / 23.2;
-				indicadorDeMasaProteicaMuscular = indicadorDeMasaProteicaMuscular < 0
-						? indicadorDeMasaProteicaMuscular * -1
-						: indicadorDeMasaProteicaMuscular;
+				indicadorDeMasaProteicaMuscular = (antropometria.getReservaProteica() * 100) / 23.2;
 			}
 			if (indicadorDeMasaProteicaMuscular > 90) {
-				estado3 = "\nEstado de reservas de proteina: Normal("
-						+ indicadorDeMasaProteicaMuscular + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
-			} else if (indicadorDeMasaProteicaMuscular >= 80
-					&& indicadorDeMasaProteicaMuscular <= 90) {
-				estado3 = "\nEstado de reservas de proteina: DESGASTE LEVE ("
-						+ indicadorDeMasaProteicaMuscular + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
-			} else if (indicadorDeMasaProteicaMuscular >= 60
-					&& indicadorDeMasaProteicaMuscular <= 79) {
-				estado3 = "\nEstado de reservas de proteina: DESGASTE MODERADO ("
-						+ indicadorDeMasaProteicaMuscular + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
+				estado3 = "\nEstado de reservas de proteina: Normal(" + indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (indicadorDeMasaProteicaMuscular >= 80 && indicadorDeMasaProteicaMuscular <= 90) {
+				estado3 = "\nEstado de reservas de proteina: DESGASTE LEVE (" + indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
+			} else if (indicadorDeMasaProteicaMuscular >= 60 && indicadorDeMasaProteicaMuscular <= 79) {
+				estado3 = "\nEstado de reservas de proteina: DESGASTE MODERADO (" + indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 			} else if (indicadorDeMasaProteicaMuscular < 60) {
-				estado3 = "\nEstado de reservas de proteina: DESGASTE SEVERO ("
-						+ indicadorDeMasaProteicaMuscular + "%)\n";
-				antropometria
-						.setObservacionPliegue(estado1 + estado2 + estado3);
+				estado3 = "\nEstado de reservas de proteina: DESGASTE SEVERO (" + indicadorDeMasaProteicaMuscular + "%)\n";
+				antropometria.setObservacionPliegue(estado1 + estado2 + estado3);
 			}
 		}
 		return null;
 	}
 	public String eliminardtIntoleranciaAlergica() {
-		IntoleranciaAlergica su = (IntoleranciaAlergica) dtIntoleranciaAlergica
-				.getRowData();
+		IntoleranciaAlergica su = (IntoleranciaAlergica) dtIntoleranciaAlergica.getRowData();
 		listaIntoleranciaAlergia.remove(su);
 		return null;
 	}
 	public String eliminarSuplemento() {
-		SuplementoNutricional su = (SuplementoNutricional) dtSuplemento
-				.getRowData();
+		SuplementoNutricional su = (SuplementoNutricional) dtSuplemento.getRowData();
 		listaSuplementoNutricional.remove(su);
 		return null;
 	}
@@ -324,8 +339,7 @@ public class PacienteBean {
 		return null;
 	}
 	public String eliminarProblemaGastrointestinal() {
-		ProblemaGastrointestinal problem = (ProblemaGastrointestinal) dtProblemasGatrointestinales
-				.getRowData();
+		ProblemaGastrointestinal problem = (ProblemaGastrointestinal) dtProblemasGatrointestinales.getRowData();
 		listaAlimentoNoPreferido.remove(problem);
 		return null;
 	}
@@ -385,14 +399,12 @@ public class PacienteBean {
 	}
 
 	public String eliminarPatologiaFamiliar() {
-		PatologiaAsociada pt = (PatologiaAsociada) dtPatologiaFamiliar
-				.getRowData();
+		PatologiaAsociada pt = (PatologiaAsociada) dtPatologiaFamiliar.getRowData();
 		listaPatologiaAsociadaFamiliar.remove(pt);
 		return null;
 	}
 	public String eliminarPatologiaPaciente() {
-		PatologiaAsociada pt = (PatologiaAsociada) dtPatologiaPaciente
-				.getRowData();
+		PatologiaAsociada pt = (PatologiaAsociada) dtPatologiaPaciente.getRowData();
 		listaPatologiaAsociadaPaciente.remove(pt);
 		return null;
 	}
@@ -416,8 +428,7 @@ public class PacienteBean {
 		return antecedenteAlimentario;
 	}
 
-	public void setAntecedenteAlimentario(
-			AntecedenteAlimentario antecedenteAlimentario) {
+	public void setAntecedenteAlimentario(AntecedenteAlimentario antecedenteAlimentario) {
 		this.antecedenteAlimentario = antecedenteAlimentario;
 	}
 
@@ -481,8 +492,7 @@ public class PacienteBean {
 		return problemaGastrointestinal;
 	}
 
-	public void setProblemaGastrointestinal(
-			ProblemaGastrointestinal problemaGastrointestinal) {
+	public void setProblemaGastrointestinal(ProblemaGastrointestinal problemaGastrointestinal) {
 		this.problemaGastrointestinal = problemaGastrointestinal;
 	}
 
@@ -490,8 +500,7 @@ public class PacienteBean {
 		return suplementoNutricional;
 	}
 
-	public void setSuplementoNutricional(
-			SuplementoNutricional suplementoNutricional) {
+	public void setSuplementoNutricional(SuplementoNutricional suplementoNutricional) {
 		this.suplementoNutricional = suplementoNutricional;
 	}
 
@@ -515,8 +524,7 @@ public class PacienteBean {
 		return listaAntecedenteAlimentario;
 	}
 
-	public void setListaAntecedenteAlimentario(
-			List<AntecedenteAlimentario> listaAntecedenteAlimentario) {
+	public void setListaAntecedenteAlimentario(List<AntecedenteAlimentario> listaAntecedenteAlimentario) {
 		this.listaAntecedenteAlimentario = listaAntecedenteAlimentario;
 	}
 
@@ -548,8 +556,7 @@ public class PacienteBean {
 		return listaHistoriaClinica;
 	}
 
-	public void setListaHistoriaClinica(
-			List<HistoriaClinica> listaHistoriaClinica) {
+	public void setListaHistoriaClinica(List<HistoriaClinica> listaHistoriaClinica) {
 		this.listaHistoriaClinica = listaHistoriaClinica;
 	}
 
@@ -557,8 +564,7 @@ public class PacienteBean {
 		return listaIntoleranciaAlergia;
 	}
 
-	public void setListaIntoleranciaAlergia(
-			List<IntoleranciaAlergica> listaIntoleranciaAlergia) {
+	public void setListaIntoleranciaAlergia(List<IntoleranciaAlergica> listaIntoleranciaAlergia) {
 		this.listaIntoleranciaAlergia = listaIntoleranciaAlergia;
 	}
 
@@ -573,23 +579,20 @@ public class PacienteBean {
 	public List<PatologiaAsociada> getListaPatologiaAsociadaFamiliar() {
 		return listaPatologiaAsociadaFamiliar;
 	}
-	public void setListaPatologiaAsociadaFamiliar(
-			List<PatologiaAsociada> listaPatologiaAsociadaFamiliar) {
+	public void setListaPatologiaAsociadaFamiliar(List<PatologiaAsociada> listaPatologiaAsociadaFamiliar) {
 		this.listaPatologiaAsociadaFamiliar = listaPatologiaAsociadaFamiliar;
 	}
 	public List<PatologiaAsociada> getListaPatologiaAsociadaPaciente() {
 		return listaPatologiaAsociadaPaciente;
 	}
-	public void setListaPatologiaAsociadaPaciente(
-			List<PatologiaAsociada> listaPatologiaAsociadaPaciente) {
+	public void setListaPatologiaAsociadaPaciente(List<PatologiaAsociada> listaPatologiaAsociadaPaciente) {
 		this.listaPatologiaAsociadaPaciente = listaPatologiaAsociadaPaciente;
 	}
 	public List<ProblemaGastrointestinal> getListaProblemaGastrointestinal() {
 		return listaProblemaGastrointestinal;
 	}
 
-	public void setListaProblemaGastrointestinal(
-			List<ProblemaGastrointestinal> listaProblemaGastrointestinal) {
+	public void setListaProblemaGastrointestinal(List<ProblemaGastrointestinal> listaProblemaGastrointestinal) {
 		this.listaProblemaGastrointestinal = listaProblemaGastrointestinal;
 	}
 
@@ -597,8 +600,7 @@ public class PacienteBean {
 		return listaSuplementoNutricional;
 	}
 
-	public void setListaSuplementoNutricional(
-			List<SuplementoNutricional> listaSuplementoNutricional) {
+	public void setListaSuplementoNutricional(List<SuplementoNutricional> listaSuplementoNutricional) {
 		this.listaSuplementoNutricional = listaSuplementoNutricional;
 	}
 
@@ -648,8 +650,7 @@ public class PacienteBean {
 		return listaAlimentoNoPreferido;
 	}
 
-	public void setListaAlimentoNoPreferido(
-			List<Alimento> listaAlimentoNoPreferido) {
+	public void setListaAlimentoNoPreferido(List<Alimento> listaAlimentoNoPreferido) {
 		this.listaAlimentoNoPreferido = listaAlimentoNoPreferido;
 	}
 
@@ -743,8 +744,7 @@ public class PacienteBean {
 	public DataTable getDtProblemasGatrointestinales() {
 		return dtProblemasGatrointestinales;
 	}
-	public void setDtProblemasGatrointestinales(
-			DataTable dtProblemasGatrointestinales) {
+	public void setDtProblemasGatrointestinales(DataTable dtProblemasGatrointestinales) {
 		this.dtProblemasGatrointestinales = dtProblemasGatrointestinales;
 	}
 	public DataTable getDtIntoleranciaAlergica() {
@@ -753,5 +753,22 @@ public class PacienteBean {
 	public void setDtIntoleranciaAlergica(DataTable dtIntoleranciaAlergica) {
 		this.dtIntoleranciaAlergica = dtIntoleranciaAlergica;
 	}
-
+	public DataTable getDtPacientes() {
+		return dtPacientes;
+	}
+	public void setDtPacientes(DataTable dtPacientes) {
+		this.dtPacientes = dtPacientes;
+	}
+	public boolean isConsulta() {
+		return consulta;
+	}
+	public void setConsulta(boolean consulta) {
+		this.consulta = consulta;
+	}
+	public boolean isListado() {
+		return listado;
+	}
+	public void setListado(boolean listado) {
+		this.listado = listado;
+	}
 }

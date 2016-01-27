@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -105,6 +105,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<Antropometria> getAntropometrias() {
+		if(this.listAntropometria==null)
+			this.listAntropometria=new ArrayList<Antropometria>();
 		return this.listAntropometria;
 	}
 
@@ -135,6 +137,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<HistoriaClinica> getHistoriaClinicas() {
+		if(this.historiaClinicas==null)
+			this.historiaClinicas=new ArrayList<HistoriaClinica>();
 		return this.historiaClinicas;
 	}
 
@@ -157,6 +161,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<Medicamento> getMedicamentos() {
+		if(this.medicamentos==null)
+			this.medicamentos=new ArrayList<Medicamento>();
 		return this.medicamentos;
 	}
 
@@ -180,6 +186,8 @@ public class DatosMedico implements Serializable {
 
 
 	public List<SuplementoNutricional> getSuplementoNutricionals() {
+		if(this.suplementoNutricionals==null)
+			this.suplementoNutricionals=new ArrayList<SuplementoNutricional>();
 		return this.suplementoNutricionals;
 	}
 
@@ -210,6 +218,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<Antropometria> getListAntropometria() {
+		if(this.listAntropometria==null)
+			listAntropometria=new ArrayList<Antropometria>();
 		return listAntropometria;
 	}
 
