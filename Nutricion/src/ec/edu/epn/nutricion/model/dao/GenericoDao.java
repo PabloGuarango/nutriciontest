@@ -10,7 +10,7 @@ import javax.ejb.Stateless;
  * @Version: 1.0
  */
 @Stateless
-public class GenericoDao<T> extends AbstractDaoAS<T> {
+public class GenericoDao<T> extends AbstractDao<T> {
 
 
 	public GenericoDao(Class<T> claseEntidad) {

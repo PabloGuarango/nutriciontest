@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Historia Clinica</title>
+</h:head>
+<h:body>
+	<h:form id="frmHistoriaClinica">
+		<p:outputPanel id="panelNuevo">
+			<p:panel header="Nueva Historia">
+				<p:separator />
+				<h:outputLabel value="Fecha:" style="font-weight: bold; width:300px;" />
+				<p:calendar id="fecha"
+					value="#{historiaClinicaBean.historiaClinica.fecha}"
+					navigator="true" pattern="dd-MM-yyyy">
+					<p:ajax process="@this" event="dateSelect"></p:ajax>
+				</p:calendar>
+				<p:separator />
+				<p:panelGrid id="informacionPaciente" columns="4">
+					<f:facet name="header">
+						<h:outputText value="Paciente" style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="Nombre: " style="font-weight: bold;" />
+					<p:inputText id="nombrePaciente"
+						value="#{historiaClinicaBean.paciente.nombre}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Apellido:" style="font-weight: bold;" />
+					<p:inputText id="apellidoPaciente"
+						value="#{historiaClinicaBean.paciente.apellido}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="C.I.:" style="font-weight: bold;" />
+					<p:inputText id="cedula"
+						value="#{historiaClinicaBean.paciente.cedulaIdentidad}"
+						required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Telefono:" style="font-weight: bold;" />
+					<p:inputText id="telefono"
+						value="#{historiaClinicaBean.paciente.telefono}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Fecha de Nacimiento:"
+						style="font-weight: bold;" />
+					<p:calendar id="fechaNacimiento"
+						value="#{historiaClinicaBean.paciente.fechaNacimiento}"
+						navigator="true" pattern="dd-MM-yyyy">
+						<p:ajax process="@this" event="dateSelect"
+							update=":frmHistoriaClinica:informacionPaciente"
+							listener="#{historiaClinicaBean.calcular()}"></p:ajax>
+					</p:calendar>
+					<h:outputLabel value="Edad" style="font-weight: bold;" />
+					<h:outputLabel value="#{historiaClinicaBean.paciente.edad}" />
+					<h:outputLabel value="Sexo:" style="font-weight: bold;" />
+					<p:selectOneRadio id="sexo"
+						value="#{historiaClinicaBean.paciente.sexo}">
+						<f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+						<f:selectItem itemLabel="Femenino" itemValue="Femenino" />
+						<p:ajax process="@this" global="false"></p:ajax>
+					</p:selectOneRadio>
+					<h:outputLabel value="Rol:" style="font-weight: bold;" />
+					<p:selectOneRadio id="rol"
+						value="#{historiaClinicaBean.paciente.rol}">
+						<f:selectItem itemLabel="Profesor" itemValue="Profesor" />
+						<f:selectItem itemLabel="Estudiante" itemValue="Estudiante" />
+						<f:selectItem itemLabel="Familiar" itemValue="Familiar" />
+						<f:selectItem itemLabel="Empleado" itemValue="Empleado" />
+						<p:ajax process="@this" global="false" />
+					</p:selectOneRadio>
+				</p:panelGrid>
+				<p:separator />
+				<!-- 					informacionSubjetiva -->
+				<p:panelGrid columns="2" id="informacionSubjetiva">
+					<f:facet name="header">
+						<h:outputText value="Información Subjetiva"
+							style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="Motivo de consulta:"
+						style="font-weight: bold;" for="motivo" />
+					<p:inputText id="motivo"
+						value="#{historiaClinicaBean.datosMedicos.motivoDeConsulta}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Ejercicio:" style="font-weight: bold;" />
+					<p:selectOneRadio id="ejercicio"
+						value="#{historiaClinicaBean.ejercicio}">
+						<f:selectItem itemLabel="Si" itemValue="true" />
+						<f:selectItem itemLabel="No" itemValue="false" />
+						<p:ajax process="@this" event="change"
+							update=":frmHistoriaClinica:informacionSubjetiva"></p:ajax>
+					</p:selectOneRadio>
+					<h:outputLabel id="lblTipo" value="Tipo:"
+						style="font-weight: bold;"
+						rendered="#{historiaClinicaBean.ejercicio=='true'}" />
+					<p:inputText id="tipo"
+						value="#{historiaClinicaBean.datosMedicos.ejercicioTipo}"
+						rendered="#{historiaClinicaBean.ejercicio=='true'}" />
+					<h:outputLabel id="lblVeces" value="Veces:"
+						style="font-weight: bold;"
+						rendered="#{historiaClinicaBean.ejercicio=='true'}" />
+					<p:inputText id="veces"
+						value="#{historiaClinicaBean.datosMedicos.ejercicioVeces}"
+						rendered="#{historiaClinicaBean.ejercicio=='true'}" />
+					<h:outputLabel id="lblDuracion" value="Duracion:"
+						style="font-weight: bold;"
+						rendered="#{historiaClinicaBean.ejercicio=='true'}" />
+					<p:inputText id="duracion"
+						value="#{historiaClinicaBean.datosMedicos.ejercicioDuracion}"
+						rendered="#{historiaClinicaBean.ejercicio=='true'}" />
+				</p:panelGrid>
+				<p:separator />
+				<!-- 					antecedentesPatologicosFamiliares -->
+				<p:panelGrid columns="1" id="antecedentesPatologicosFamiliares">
+					<f:facet name="header">
+						<h:outputText value="ANTECEDENTES PATOLÓGICOS FAMILIARES"
+							style="font-weight: bold;" />
+					</f:facet>
+					<p:commandButton value="Agregar Patologia"
+						id="btnAgregarPatologiaFamiliar"
+						action="#{historiaClinicaBean.agregarPatologiaFamiliar()}"
+						update=":frmHistoriaClinica:antecedentesPatologicosFamiliares"
+						process="@this" icon="ui-icon-plus" />
+					<p:dataTable
+						value="#{historiaClinicaBean.listaPatologiaAsociadaFamiliar}"
+						binding="#{historiaClinicaBean.dtPatologiaFamiliar}"
+						emptyMessage="" var="_patologiaFamiliar" paginator="true"
+						paginatorPosition="bottom" style="width:100%"
+						rendered="#{historiaClinicaBean.listaPatologiaAsociadaFamiliar.size()>0}">
+
+						<p:column headerText="Familiar">
+							<p:inputText value="#{_patologiaFamiliar.familiar}"
+								required="true">
+								<f:validateBean />
+								<p:ajax process="@this" global="false"></p:ajax>
+							</p:inputText>
+						</p:column>
+						<p:column headerText="Patologias Asociadas">
+							<p:selectOneMenu value="#{_patologiaFamiliar.nombre}"
+								required="true">
+								<f:selectItem itemValue="" itemLabel="Seleccione..." />
+								<f:selectItem itemValue="Obesidad" itemLabel="Obesidad" />
+								<f:selectItem itemValue="Diabetes mellitus"
+									itemLabel="Diabetes mellitus" />
+								<f:selectItem itemValue="Hipertensión arterial"
+									itemLabel="Hipertensión arterial" />
+								<f:selectItem itemValue="Enfermedad cardiovacular"
+									itemLabel="Enfermedad cardiovacular" />
+								<f:selectItem itemValue="Cáncer" itemLabel="Cáncer" />
+								<f:selectItem itemValue="Colesterol elevado"
+									itemLabel="Colesterol elevado" />
+								<p:ajax process="@this" global="false" event="change"></p:ajax>
+							</p:selectOneMenu>
+						</p:column>
+
+						<p:column>
+							<p:commandButton id="btnEliminarPatologiaFamiliar"
+								action="#{historiaClinicaBean.eliminarPatologiaFamiliar()}"
+								icon="ui-icon-trash" title="Eliminar"
+								update=":frmHistoriaClinica:antecedentesPatologicosFamiliares"
+								process="@this" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+				<p:separator />
+				<!-- 					historialDietetico -->
+				<p:panelGrid columns="2" id="historialDietetico">
+					<f:facet name="header">
+						<h:outputText value="HISTORIA DIETÉTICA"
+							style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="¿Cuántas comidas hace al día?"
+						style="font-weight: bold;" />
+					<p:inputText id="comidas"
+						value="#{historiaClinicaBean.antecedenteAlimentario.vecesAlimenta}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="¿Dónde?" style="font-weight: bold;" />
+					<p:inputText id="donde"
+						value="#{historiaClinicaBean.antecedenteAlimentario.dondeAlimenta}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="¿Quién prepara?" style="font-weight: bold;" />
+					<p:inputText id="quien"
+						value="#{historiaClinicaBean.antecedenteAlimentario.quienPreparaAlimento}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Vive con" style="font-weight: bold;" />
+					<p:inputText id="vive"
+						value="#{historiaClinicaBean.antecedenteAlimentario.conQuienVive}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Come entre comidas"
+						style="font-weight: bold;" />
+					<p:selectOneRadio id="entrecomidas"
+						value="#{historiaClinicaBean.entrecomidas}">
+						<f:selectItem itemLabel="Si" itemValue="true" />
+						<f:selectItem itemLabel="No" itemValue="false" />
+						<p:ajax process="@this" event="change"
+							update=":frmHistoriaClinica:historialDietetico"></p:ajax>
+					</p:selectOneRadio>
+					<h:outputLabel value="¿Qué?" style="font-weight: bold;"
+						rendered="#{historiaClinicaBean.entrecomidas=='true'}" />
+					<p:inputText id="que"
+						value="#{historiaClinicaBean.antecedenteAlimentario.entrecomidas}"
+						rendered="#{historiaClinicaBean.entrecomidas=='true'}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Apetito:" style="font-weight: bold;" />
+					<p:selectOneRadio id="apetito"
+						value="#{historiaClinicaBean.antecedenteAlimentario.apetito}">
+						<f:selectItem itemLabel="Bueno" itemValue="Bueno" />
+						<f:selectItem itemLabel="Regular" itemValue="Regular" />
+						<f:selectItem itemLabel="Malo" itemValue="Malo" />
+						<p:ajax process="@this" global="false" />
+					</p:selectOneRadio>
+
+					<h:outputLabel value="Alimentos Preferidos"
+						style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar"
+							action="#{historiaClinicaBean.agregarAlimento}"
+							update=":frmHistoriaClinica:historialDietetico" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable value="#{historiaClinicaBean.listaAlimento}"
+							rendered="#{historiaClinicaBean.listaAlimento.size()!=0}"
+							binding="#{historiaClinicaBean.dtAlimento}" emptyMessage=""
+							var="_alimento" paginator="true" paginatorPosition="bottom"
+							style="width:100%">
+
+							<p:column headerText="Alimentos Preferidos">
+								<p:inputText value="#{_alimento.nombreAlimento}">
+									<p:ajax process="@this" global="false" />
+								</p:inputText>
+							</p:column>
+
+							<p:column>
+								<p:commandButton
+									action="#{historiaClinicaBean.eliminarAlimento}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:historialDietetico" process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+
+					<h:outputLabel value="Alimentos No gustan/causan malestar"
+						style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar"
+							action="#{historiaClinicaBean.agregarAlimentoNoPreferido()}"
+							update=":frmHistoriaClinica:historialDietetico" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable
+							value="#{historiaClinicaBean.listaAlimentoNoPreferido}"
+							rendered="#{historiaClinicaBean.listaAlimentoNoPreferido.size()!=0}"
+							binding="#{historiaClinicaBean.dtAlimentoNoPreferido}"
+							emptyMessage="" var="_aliment" paginator="true"
+							paginatorPosition="bottom" style="width:100%">
+							<p:column headerText="Alimentos No Preferidos">
+								<p:inputText value="#{_aliment.nombreAlimento}">
+									<p:ajax process="@this" global="false" />
+								</p:inputText>
+							</p:column>
+
+							<p:column>
+								<p:commandButton
+									action="#{historiaClinicaBean.eliminarAlimentoNoPreferido()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:historialDietetico" process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<h:outputLabel value="Hábitos:" style="font-weight: bold;" />
+					<p:panelGrid columns="6">
+						<h:outputLabel value="Tabaco:" style="font-weight: bold;" />
+						<p:inputText value="#{historiaClinicaBean.tabaco}">
+							<p:ajax process="@this" global="false" />
+						</p:inputText>
+						<h:outputLabel value="Alcohol:" style="font-weight: bold;" />
+						<p:inputText value="#{historiaClinicaBean.alcohol}">
+							<p:ajax process="@this" global="false" />
+						</p:inputText>
+						<h:outputLabel value="Bebidas Azucaradas:"
+							style="font-weight: bold;" />
+						<p:inputText value="#{historiaClinicaBean.bebidasAzucaradas}">
+							<p:ajax process="@this" global="false" />
+						</p:inputText>
+					</p:panelGrid>
+					<h:outputLabel value="Agua Sola (vasos/día):"
+						style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antecedenteAlimentario.aguaSola}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Líquidos (vasos/día):"
+						style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antecedenteAlimentario.liquidos}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Refrigerios:" style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar"
+							action="#{historiaClinicaBean.agregarRefrigerio}"
+							update=":frmHistoriaClinica:historialDietetico" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable value="#{historiaClinicaBean.listaRefrigerios}"
+							rendered="#{historiaClinicaBean.listaRefrigerios.size()!=0}"
+							binding="#{historiaClinicaBean.dtRefrigerio}" emptyMessage=""
+							var="_refri" paginator="true" paginatorPosition="bottom"
+							style="width:100%">
+
+							<p:column headerText="Refrigerios">
+								<p:inputText value="#{_refri.nombreAlimento}">
+									<p:ajax process="@this" global="false" />
+								</p:inputText>
+							</p:column>
+
+							<p:column>
+								<p:commandButton
+									action="#{historiaClinicaBean.eliminarRefrigerio()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:historialDietetico" process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+
+					<h:outputLabel value="Problemas Gastroinstestinales:"
+						style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar"
+							action="#{historiaClinicaBean.agregarProblemasGastroinstestinales}"
+							update=":frmHistoriaClinica:historialDietetico" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable
+							value="#{historiaClinicaBean.listaProblemaGastrointestinal}"
+							rendered="#{historiaClinicaBean.listaProblemaGastrointestinal.size()!=0}"
+							binding="#{historiaClinicaBean.dtProblemasGatrointestinales}"
+							emptyMessage="" var="_problem" paginator="true"
+							paginatorPosition="bottom" style="width:100%">
+
+							<p:column headerText="Problema Gastrointestinal">
+								<p:inputText value="#{_problem.descripcion}">
+									<p:ajax process="@this" global="false" />
+								</p:inputText>
+							</p:column>
+
+							<p:column>
+								<p:commandButton
+									action="#{historiaClinicaBean.eliminarProblemaGastrointestinal()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:historialDietetico" process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<h:outputLabel value="Intolerancias y Alergias Alimentarias:"
+						style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar"
+							action="#{historiaClinicaBean.agregarIntoleranciaAlergica}"
+							update=":frmHistoriaClinica:historialDietetico" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable
+							value="#{historiaClinicaBean.listaIntoleranciaAlergia}"
+							rendered="#{historiaClinicaBean.listaIntoleranciaAlergia.size()!=0}"
+							binding="#{historiaClinicaBean.dtIntoleranciaAlergica}"
+							emptyMessage="" var="_intolerancia" paginator="true"
+							paginatorPosition="bottom" style="width:100%">
+
+
+							<p:column headerText="Intolerancia o alergia">
+								<p:inputText value="#{_intolerancia.descripcion}">
+									<p:ajax process="@this" global="false" />
+								</p:inputText>
+							</p:column>
+							<p:column>
+								<p:commandButton
+									action="#{historiaClinicaBean.eliminardtIntoleranciaAlergica()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:historialDietetico" process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<h:outputLabel value="Patologias asociadas:"
+						style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar Patologia"
+							id="btnAgregarPatologiaPaciente"
+							action="#{historiaClinicaBean.agregarPatologiaPaciente()}"
+							update=":frmHistoriaClinica:historialDietetico" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable
+							value="#{historiaClinicaBean.listaPatologiaAsociadaPaciente}"
+							binding="#{historiaClinicaBean.dtPatologiaPaciente}"
+							emptyMessage="" var="_patologiaPaciente" paginator="true"
+							paginatorPosition="bottom" style="width:100%"
+							rendered="#{historiaClinicaBean.listaPatologiaAsociadaPaciente.size()>0}">
+
+
+							<p:column headerText="Patologias Asociadas">
+								<p:selectOneMenu value="#{_patologiaPaciente.nombre}"
+									required="true">
+									<f:selectItem itemValue="" itemLabel="Seleccione..." />
+									<f:selectItem itemValue="Obesidad" itemLabel="Obesidad" />
+									<f:selectItem itemValue="Diabetes mellitus"
+										itemLabel="Diabetes mellitus" />
+									<f:selectItem itemValue="Hipertensión arterial"
+										itemLabel="Hipertensión arterial" />
+									<f:selectItem itemValue="Enfermedad cardiovacular"
+										itemLabel="Enfermedad cardiovacular" />
+									<f:selectItem itemValue="Cáncer" itemLabel="Cáncer" />
+									<f:selectItem itemValue="Colesterol elevado"
+										itemLabel="Colesterol elevado" />
+									<p:ajax process="@this" global="false" />
+								</p:selectOneMenu>
+							</p:column>
+
+							<p:column>
+								<p:commandButton id="btnEliminarPatologiaPaciente"
+									action="#{historiaClinicaBean.eliminarPatologiaPaciente()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:historialDietetico"
+									process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+				</p:panelGrid>
+				<p:separator />
+				<!-- 					informacionObjetiva -->
+				<p:panelGrid columns="2" id="informacionObjetiva">
+					<f:facet name="header">
+						<h:outputText value="INFORMACION OBJETIVA"
+							style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="Dx Medico:" style="font-weight: bold;" />
+					<p:inputText value="#{historiaClinicaBean.datosMedicos.dxMedico}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Cirugias" style="font-weight: bold;" />
+					<p:selectOneRadio value="#{historiaClinicaBean.cirugias}">
+						<f:selectItem itemLabel="Si" itemValue="true" />
+						<f:selectItem itemLabel="No" itemValue="false" />
+						<p:ajax process="@this" event="change"
+							update=":frmHistoriaClinica:informacionObjetiva"></p:ajax>
+					</p:selectOneRadio>
+					<p:commandButton value="Agregar"
+						action="#{historiaClinicaBean.agregarCirugia}"
+						update=":frmHistoriaClinica:informacionObjetiva" process="@this"
+						icon="ui-icon-plus"
+						rendered="#{historiaClinicaBean.cirugias=='true'}" />
+					<p:dataTable value="#{historiaClinicaBean.listaCirugia}"
+						rendered="#{historiaClinicaBean.cirugias=='true'}"
+						binding="#{historiaClinicaBean.dtCirugia}" emptyMessage=""
+						var="_ciru" paginator="true" paginatorPosition="bottom"
+						style="width:100%">
+
+						<p:column headerText="Cirugias">
+							<p:inputText value="#{_ciru.descripcion}">
+								<p:ajax process="@this" global="false" />
+							</p:inputText>
+						</p:column>
+
+						<p:column>
+							<p:commandButton
+								action="#{historiaClinicaBean.eliminarCirugia()}"
+								icon="ui-icon-trash" title="Eliminar"
+								update=":frmHistoriaClinica:informacionObjetiva" process="@this" />
+						</p:column>
+					</p:dataTable>
+					<h:outputLabel value="Medicamentos" style="font-weight: bold;" />
+					<p:panelGrid columns="2">
+						<p:commandButton value="Agregar"
+							action="#{historiaClinicaBean.agregarMedicamento()}"
+							update=":frmHistoriaClinica:informacionObjetiva" process="@this"
+							icon="ui-icon-plus" />
+						<p:dataTable value="#{historiaClinicaBean.listaMedicamento}"
+							rendered="#{historiaClinicaBean.listaMedicamento.size()!=0}"
+							binding="#{historiaClinicaBean.dtMedicamento}" emptyMessage=""
+							var="_medica" paginator="true" paginatorPosition="bottom"
+							style="width:100%">
+
+
+							<p:column headerText="Medicamentos">
+								<p:inputText value="#{_medica.descripcion}">
+									<p:ajax process="@this" global="false" />
+								</p:inputText>
+							</p:column>
+
+							<p:column>
+								<p:commandButton
+									action="#{historiaClinicaBean.eliminarMedicamento()}"
+									icon="ui-icon-trash" title="Eliminar"
+									update=":frmHistoriaClinica:informacionObjetiva"
+									process="@this" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<h:outputLabel value="Suplementos" style="font-weight: bold;" />
+					<p:selectOneRadio value="#{historiaClinicaBean.suplementos}">
+						<f:selectItem itemLabel="Si" itemValue="true" />
+						<f:selectItem itemLabel="No" itemValue="false" />
+						<p:ajax process="@this" event="change"
+							update=":frmHistoriaClinica:informacionObjetiva"></p:ajax>
+					</p:selectOneRadio>
+					<p:commandButton value="Agregar"
+						action="#{historiaClinicaBean.agregarSuplemento()}"
+						update=":frmHistoriaClinica:informacionObjetiva" process="@this"
+						icon="ui-icon-plus"
+						rendered="#{historiaClinicaBean.suplementos=='true'}" />
+					<p:dataTable
+						value="#{historiaClinicaBean.listaSuplementoNutricional}"
+						rendered="#{historiaClinicaBean.suplementos=='true'}"
+						binding="#{historiaClinicaBean.dtSuplemento}" emptyMessage=""
+						var="_suplemento" paginator="true" paginatorPosition="bottom"
+						style="width:100%">
+
+						<p:column headerText="Suplementos">
+							<p:inputText value="#{_suplemento.descripcion}">
+								<p:ajax process="@this" global="false" />
+							</p:inputText>
+						</p:column>
+						<p:column>
+							<p:commandButton
+								action="#{historiaClinicaBean.eliminarSuplemento()}"
+								icon="ui-icon-trash" title="Eliminar"
+								update=":frmHistoriaClinica:informacionObjetiva" process="@this" />
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+				<p:separator />
+				<!-- 		"ANTROPOMETRIA" -->
+				<p:panelGrid columns="2" id="antropometria">
+					<f:facet name="header">
+						<h:outputText value="ANTROPOMETRIA" style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="Constitución Corporal:"
+						style="font-weight: bold;" />
+					<p:selectOneMenu
+						value="#{historiaClinicaBean.antropometria.constitucionCorporal}"
+						required="true">
+						<f:selectItem itemValue="" itemLabel="Seleccione..." />
+						<f:selectItem itemValue="Pequena" itemLabel="Pequena" />
+						<f:selectItem itemValue="Mediana" itemLabel="Mediana" />
+						<f:selectItem itemValue="Gruesa" itemLabel="Gruesa" />
+						<p:ajax update=":frmHistoriaClinica:antropometria" process="@this"
+							listener="#{historiaClinicaBean.calcular()}" />
+					</p:selectOneMenu>
+					<h:outputLabel value="Circun. Muñeca:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.circunferenciaMuneca}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Talla:" style="font-weight: bold;" />
+					<p:inputText id="Input7"
+						value="#{historiaClinicaBean.antropometria.talla}">
+						<p:ajax update="pesoIdeal" process="@this"
+							listener="#{historiaClinicaBean.calcular()}" />
+					</p:inputText>
+					<h:outputLabel value="Peso Ideal:" style="font-weight: bold;" />
+					<h:outputLabel id="pesoIdeal"
+						value="#{historiaClinicaBean.antropometria.pesoIdeal} Kg" />
+					<h:outputLabel value="Peso Actual:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.pesoActual}">
+						<p:ajax update=":frmHistoriaClinica:antropometria" process="@this"
+							listener="#{historiaClinicaBean.calcular()}" />
+					</p:inputText>
+
+					<h:outputLabel id="imc" value="IMC:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.indiceMasaCorporal}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Cintura:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.diametroCintura}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Cadera:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.diametroCadera}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Per. Braquial:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.perimetroBraquial}">
+						<p:ajax update=":frmHistoriaClinica:pliegues" process="@this"
+							listener="#{historiaClinicaBean.calcular()}" />
+					</p:inputText>
+					<h:outputLabel value="% Grasa:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.porcentajeGrasa}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="% MUSCULO - ESQUELETICO:"
+						style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.porcentajeMusculoEsquileto}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="GEB:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.gastoEnergeticoBasal}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Edad metabolica:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.edadMetabolica}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Nivel de grasa visceral:"
+						style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.nivelGrasaVisceral}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="ICC:" style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.indiceCinturaCadera}">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+				</p:panelGrid>
+				<p:separator />
+				<p:panelGrid columns="2" id="pliegues">
+					<f:facet name="header">
+						<h:outputText value="Pliegues" style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="TRICIPITAL (Reservas grasa):"
+						style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.pliegueTricipital}">
+						<p:ajax update=":frmHistoriaClinica:pliegues" process="@this"
+							listener="#{historiaClinicaBean.calcular()}" />
+					</p:inputText>
+					<h:outputLabel value="CMB (reservas proteica):"
+						style="font-weight: bold;" />
+					<p:inputText
+						value="#{historiaClinicaBean.antropometria.reservaProteica}" />
+					<h:outputLabel value="Observaciones:" style="font-weight: bold;" />
+					<p:inputTextarea rows="6" cols="33"
+						value="#{historiaClinicaBean.antropometria.observacionPliegue}" />
+				</p:panelGrid>
+				<p:separator />
+				<p:commandButton value="Guardar"
+					action="#{historiaClinicaBean.guardar()}" update="@form"
+					icon="fa-save"></p:commandButton>
+				<p:commandButton value="Cancelar" process="@this"
+					icon="icon-cancel-2" action="#{historiaClinicaBean.cancelar()}"
+					update="@form"></p:commandButton>
+			</p:panel>
+		</p:outputPanel>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Paciente</title>
+</h:head>
+<h:body>
+	<h:form id="frmPaciente">
+		<p:panel header="Pacientes" id="panelContenedor">
+			<p:growl id="growl" showDetail="true" sticky="false" />
+			<p:outputPanel id="panelListado" rendered="#{!pacienteBean.editado}">
+				<p:panel header="Listado de Pacientes">
+					<p:separator />
+					<p:commandButton value="Nuevo" title="Nuevo"
+						update=":frmPaciente:panelContenedor" icon="ui-icon-document"
+						actionListener="#{pacienteBean.crear}" />
+					<p:separator />
+					<p:dataTable id="tablaPacientes"
+						emptyMessage="No existen registros"
+						value="#{pacienteBean.listaPaciente}" var="_paciente"
+						rowIndexVar="secuencialPaciente"
+						binding="#{pacienteBean.dtPacientes}" paginator="true"
+						paginatorPosition="bottom" style="width:100%"
+						rowsPerPageTemplate="10, 20, 30"
+						selection="#{pacienteBean.paciente}" selectionMode="single"
+						rowKey="#{_paciente.idPaciente}" sortBy="#{_paciente.nombre}">
+
+						<p:column styleClass="columnaDTAccion" headerText="Nº">
+							<h:outputText value="#{secuencialPaciente+1}" />
+						</p:column>
+
+						<p:column styleClass="columnaDTCodigo"
+							sortBy="#{_paciente.apellido}" filterBy="#{_paciente.apellido}^#{_paciente.nombre}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Paciente" />
+							</f:facet>
+							<h:outputText value="#{_paciente.apellido} #{_paciente.nombre}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Acciones" />
+							</f:facet>
+							<p:commandButton id="btnConsultarPaciente"
+								action="#{pacienteBean.editarPaciente}" icon="ui-icon-refresh"
+								title="Editar/Consultar" update=":frmPaciente:panelContenedor"
+								process="@this">
+							</p:commandButton>
+							<p:commandButton id="btnEliminarPaciente"
+								action="#{pacienteBean.eliminarPaciente}" icon="ui-icon-trash"
+								title="Eliminar" update=":frmPaciente:panelContenedor"
+								process="@this">
+								<p:confirm header="Confirmacion" message="¿Esta seguro?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Si" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="No" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</p:outputPanel>
+			<p:outputPanel id="panelNuevo" rendered="#{pacienteBean.editado}">
+				<p:panelGrid id="informacionPaciente" columns="4">
+					<f:facet name="header">
+						<h:outputText value="Paciente" style="font-weight: bold;" />
+					</f:facet>
+					<h:outputLabel value="Nombre: " style="font-weight: bold;" />
+					<p:inputText id="nombrePaciente"
+						value="#{pacienteBean.paciente.nombre}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Apellido:" style="font-weight: bold;" />
+					<p:inputText id="apellidoPaciente"
+						value="#{pacienteBean.paciente.apellido}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="C.I.:" style="font-weight: bold;" />
+					<p:inputText id="cedula"
+						value="#{pacienteBean.paciente.cedulaIdentidad}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Telefono:" style="font-weight: bold;" />
+					<p:inputText id="telefono"
+						value="#{pacienteBean.paciente.telefono}" required="true">
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<h:outputLabel value="Fecha de Nacimiento:"
+						style="font-weight: bold;" />
+					<p:calendar id="fechaNacimiento"
+						value="#{pacienteBean.paciente.fechaNacimiento}" navigator="true"
+						pattern="dd-MM-yyyy">
+						<p:ajax process="@this" event="dateSelect"
+							update=":frmPaciente:informacionPaciente"
+							listener="#{pacienteBean.calcular()}"></p:ajax>
+					</p:calendar>
+					<h:outputLabel value="Edad" style="font-weight: bold;" />
+					<h:outputLabel value="#{pacienteBean.paciente.edad}" />
+					<h:outputLabel value="Sexo:" style="font-weight: bold;" />
+					<p:selectOneRadio id="sexo" value="#{pacienteBean.paciente.sexo}">
+						<f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+						<f:selectItem itemLabel="Femenino" itemValue="Femenino" />
+						<p:ajax process="@this" global="false"></p:ajax>
+					</p:selectOneRadio>
+					<h:outputLabel value="Rol:" style="font-weight: bold;" />
+					<p:selectOneRadio id="rol" value="#{pacienteBean.paciente.rol}">
+						<f:selectItem itemLabel="Profesor" itemValue="Profesor" />
+						<f:selectItem itemLabel="Estudiante" itemValue="Estudiante" />
+						<f:selectItem itemLabel="Familiar" itemValue="Familiar" />
+						<f:selectItem itemLabel="Empleado" itemValue="Empleado" />
+						<p:ajax process="@this" global="false" />
+					</p:selectOneRadio>
+					<h:outputLabel value="Correo:" style="font-weight: bold;" />
+					<p:inputText id="correo" value="#{pacienteBean.paciente.correo}"
+						required="true">
+						<f:validateBean />
+						<p:ajax process="@this" global="false" />
+					</p:inputText>
+					<p:commandButton id="btnGuardarPaciente"
+						action="#{pacienteBean.guardarPaciente}" icon="ui-icon-disk"
+						title="Guardar" update=":frmPaciente:panelContenedor"
+						process="@this">
+					</p:commandButton>
+				</p:panelGrid>
+
+			</p:outputPanel>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

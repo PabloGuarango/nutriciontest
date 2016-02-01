@@ -7,59 +7,57 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * The persistent class for the datos_medicos database table.
  * 
  */
 @Entity
-@Table(name="datos_medicos")
-@NamedQuery(name="DatosMedico.findAll", query="SELECT d FROM DatosMedico d")
+@Table(name = "datos_medicos")
+@NamedQuery(name = "DatosMedico.findAll", query = "SELECT d FROM DatosMedico d")
 public class DatosMedico implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="ID_DATOS_MEDICOS")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_DATOS_MEDICOS")
 	private int idDatosMedicos;
 
-	@Column(name="EJERCICIO_TIPO")
+	@Column(name = "EJERCICIO_TIPO")
 	private String ejercicioTipo;
-	@Column(name="MOTIVO_DE_CONSULTA")
+	@Column(name = "MOTIVO_DE_CONSULTA")
 	private String motivoDeConsulta;
-	
-	@Column(name="DX_MEDICO")
+
+	@Column(name = "DX_MEDICO")
 	private String dxMedico;
-	@Column(name="EJERCICIO_VECES")
+	@Column(name = "EJERCICIO_VECES")
 	private int ejercicioVeces;
 
-	@Column(name="EJERICICIO_DURACION")
+	@Column(name = "EJERICICIO_DURACION")
 	private float ejercicioDuracion;
 
-	@Column(name="REALIZA_EJERCICIO")
+	@Column(name = "REALIZA_EJERCICIO")
 	private byte realizaEjercicio;
 
-	//bi-directional many-to-one association to Antropometria
-	@OneToMany(mappedBy="datosMedico")
+	// bi-directional many-to-one association to Antropometria
+	@OneToMany(mappedBy = "datosMedico")
 	private List<Antropometria> listAntropometria;
 
-	//bi-directional many-to-one association to Antropometria
+	// bi-directional many-to-one association to Antropometria
 	@ManyToOne
-	@JoinColumn(name="ID_ANTROPOMETRIA")
+	@JoinColumn(name = "ID_ANTROPOMETRIA")
 	private Antropometria antropometria;
 
-	//bi-directional many-to-one association to HistoriaClinica
-	@OneToMany(mappedBy="datosMedico")
+	// bi-directional many-to-one association to HistoriaClinica
+	@OneToMany(mappedBy = "datosMedico")
 	private List<HistoriaClinica> historiaClinicas;
 
-	//bi-directional many-to-one association to Medicamento
-	@OneToMany(mappedBy="datosMedico")
-	private List<Medicamento> medicamentos;
+	// bi-directional many-to-one association to Medicamento
+	@OneToMany(mappedBy = "datosMedico")
+	private List<Medicamento> listaMedicamentos;
 
-	
-	//bi-directional many-to-one association to SuplementoNutricional
-	@OneToMany(mappedBy="datosMedico")
-	private List<SuplementoNutricional> suplementoNutricionals;
+	// bi-directional many-to-one association to SuplementoNutricional
+	@OneToMany(mappedBy = "datosMedico")
+	private List<SuplementoNutricional> listaSuplementoNutricional;
 
 	public DatosMedico() {
 	}
@@ -105,8 +103,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<Antropometria> getAntropometrias() {
-		if(this.listAntropometria==null)
-			this.listAntropometria=new ArrayList<Antropometria>();
+		if (this.listAntropometria == null)
+			this.listAntropometria = new ArrayList<Antropometria>();
 		return this.listAntropometria;
 	}
 
@@ -137,8 +135,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<HistoriaClinica> getHistoriaClinicas() {
-		if(this.historiaClinicas==null)
-			this.historiaClinicas=new ArrayList<HistoriaClinica>();
+		if (this.historiaClinicas == null)
+			this.historiaClinicas = new ArrayList<HistoriaClinica>();
 		return this.historiaClinicas;
 	}
 
@@ -160,50 +158,28 @@ public class DatosMedico implements Serializable {
 		return historiaClinica;
 	}
 
-	public List<Medicamento> getMedicamentos() {
-		if(this.medicamentos==null)
-			this.medicamentos=new ArrayList<Medicamento>();
-		return this.medicamentos;
-	}
-
-	public void setMedicamentos(List<Medicamento> medicamentos) {
-		this.medicamentos = medicamentos;
-	}
-
 	public Medicamento addMedicamento(Medicamento medicamento) {
-		getMedicamentos().add(medicamento);
+		getListaMedicamentos().add(medicamento);
 		medicamento.setDatosMedico(this);
 
 		return medicamento;
 	}
 
 	public Medicamento removeMedicamento(Medicamento medicamento) {
-		getMedicamentos().remove(medicamento);
+		getListaMedicamentos().remove(medicamento);
 		medicamento.setDatosMedico(null);
 
 		return medicamento;
 	}
-
-
-	public List<SuplementoNutricional> getSuplementoNutricionals() {
-		if(this.suplementoNutricionals==null)
-			this.suplementoNutricionals=new ArrayList<SuplementoNutricional>();
-		return this.suplementoNutricionals;
-	}
-
-	public void setSuplementoNutricionals(List<SuplementoNutricional> suplementoNutricionals) {
-		this.suplementoNutricionals = suplementoNutricionals;
-	}
-
 	public SuplementoNutricional addSuplementoNutricional(SuplementoNutricional suplementoNutricional) {
-		getSuplementoNutricionals().add(suplementoNutricional);
+		getListaSuplementoNutricional().add(suplementoNutricional);
 		suplementoNutricional.setDatosMedico(this);
 
 		return suplementoNutricional;
 	}
 
 	public SuplementoNutricional removeSuplementoNutricional(SuplementoNutricional suplementoNutricional) {
-		getSuplementoNutricionals().remove(suplementoNutricional);
+		getListaSuplementoNutricional().remove(suplementoNutricional);
 		suplementoNutricional.setDatosMedico(null);
 
 		return suplementoNutricional;
@@ -218,8 +194,8 @@ public class DatosMedico implements Serializable {
 	}
 
 	public List<Antropometria> getListAntropometria() {
-		if(this.listAntropometria==null)
-			listAntropometria=new ArrayList<Antropometria>();
+		if (this.listAntropometria == null)
+			listAntropometria = new ArrayList<Antropometria>();
 		return listAntropometria;
 	}
 
@@ -233,5 +209,21 @@ public class DatosMedico implements Serializable {
 
 	public void setMotivoDeConsulta(String motivoDeConsulta) {
 		this.motivoDeConsulta = motivoDeConsulta;
+	}
+
+	public List<Medicamento> getListaMedicamentos() {
+		return listaMedicamentos;
+	}
+
+	public void setListaMedicamentos(List<Medicamento> listaMedicamentos) {
+		this.listaMedicamentos = listaMedicamentos;
+	}
+
+	public List<SuplementoNutricional> getListaSuplementoNutricional() {
+		return listaSuplementoNutricional;
+	}
+
+	public void setListaSuplementoNutricional(List<SuplementoNutricional> listaSuplementoNutricional) {
+		this.listaSuplementoNutricional = listaSuplementoNutricional;
 	}
 }

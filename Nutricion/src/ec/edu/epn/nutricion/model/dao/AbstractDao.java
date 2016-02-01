@@ -13,13 +13,13 @@ import ec.edu.epn.nutricion.model.db.NutricionDBBase;
  * @UsuarioCreacion: Andres Guarango
  * @Version: 1.1
  */
-public abstract class AbstractDaoAS<T> extends NutricionDBBase {
+public abstract class AbstractDao<T> extends NutricionDBBase {
 	protected Class<T> claseEntidad;
 
-	public AbstractDaoAS(Class<T> claseEntidad) {
+	public AbstractDao(Class<T> claseEntidad) {
 		this.claseEntidad = claseEntidad;
 	}
-	public AbstractDaoAS() {
+	public AbstractDao() {
 		
 	}
 	/**
@@ -28,7 +28,7 @@ public abstract class AbstractDaoAS<T> extends NutricionDBBase {
 	 * @param entidad
 	 */
 	public void insertar(T entidad) {
-		em.persist(entidad);
+		em.merge(entidad);
 	}
 
 	/**
