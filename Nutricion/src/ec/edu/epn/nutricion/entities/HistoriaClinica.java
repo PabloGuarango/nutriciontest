@@ -26,10 +26,10 @@ public class HistoriaClinica implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date fecha;
 
-	//bi-directional many-to-one association to DatosMedico
+	//bi-directional many-to-one association to InformacionMedica
 	@ManyToOne
-	@JoinColumn(name="ID_DATOS_MEDICOS")
-	private DatosMedico datosMedico;
+	@JoinColumn(name="ID_INFORMACION_MEDICA")
+	private InformacionMedica informacionMedica;
 
 	//bi-directional many-to-one association to Paciente
 	@ManyToOne
@@ -55,12 +55,12 @@ public class HistoriaClinica implements Serializable {
 		this.fecha = fecha;
 	}
 
-	public DatosMedico getDatosMedico() {
-		return this.datosMedico;
+	public InformacionMedica getDatosMedico() {
+		return this.informacionMedica;
 	}
 
-	public void setDatosMedico(DatosMedico datosMedico) {
-		this.datosMedico = datosMedico;
+	public void setDatosMedico(InformacionMedica informacionMedica) {
+		this.informacionMedica = informacionMedica;
 	}
 
 	public Paciente getPaciente() {

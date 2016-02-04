@@ -12,15 +12,15 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name = "datos_medicos")
-@NamedQuery(name = "DatosMedico.findAll", query = "SELECT d FROM DatosMedico d")
-public class DatosMedico implements Serializable {
+@Table(name = "informacion_medica")
+@NamedQuery(name = "InformacionMedica.findAll", query = "SELECT d FROM InformacionMedica d")
+public class InformacionMedica implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_DATOS_MEDICOS")
-	private int idDatosMedicos;
+	@Column(name = "ID_INFORMACION_MEDICA")
+	private int idInformacionMedica;
 
 	@Column(name = "EJERCICIO_TIPO")
 	private String ejercicioTipo;
@@ -39,7 +39,7 @@ public class DatosMedico implements Serializable {
 	private byte realizaEjercicio;
 
 	// bi-directional many-to-one association to Antropometria
-	@OneToMany(mappedBy = "datosMedico")
+	@OneToMany(mappedBy = "informacionMedica")
 	private List<Antropometria> listAntropometria;
 
 	// bi-directional many-to-one association to Antropometria
@@ -48,28 +48,25 @@ public class DatosMedico implements Serializable {
 	private Antropometria antropometria;
 
 	// bi-directional many-to-one association to HistoriaClinica
-	@OneToMany(mappedBy = "datosMedico")
+	@OneToMany(mappedBy = "informacionMedica")
 	private List<HistoriaClinica> historiaClinicas;
 
 	// bi-directional many-to-one association to Medicamento
-	@OneToMany(mappedBy = "datosMedico")
+	@OneToMany(mappedBy = "informacionMedica")
 	private List<Medicamento> listaMedicamentos;
 
 	// bi-directional many-to-one association to SuplementoNutricional
-	@OneToMany(mappedBy = "datosMedico")
+	@OneToMany(mappedBy = "informacionMedica")
 	private List<SuplementoNutricional> listaSuplementoNutricional;
 
-	public DatosMedico() {
+	public InformacionMedica() {
 	}
-
-	public int getIdDatosMedicos() {
-		return this.idDatosMedicos;
+	public int getIdInformacionMedica() {
+		return idInformacionMedica;
 	}
-
-	public void setIdDatosMedicos(int idDatosMedicos) {
-		this.idDatosMedicos = idDatosMedicos;
+	public void setIdInformacionMedica(int idInformacionMedica) {
+		this.idInformacionMedica = idInformacionMedica;
 	}
-
 	public String getEjercicioTipo() {
 		return this.ejercicioTipo;
 	}

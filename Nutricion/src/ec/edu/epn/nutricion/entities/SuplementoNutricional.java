@@ -23,10 +23,10 @@ public class SuplementoNutricional implements Serializable {
 
 	private String descripcion;
 
-	//bi-directional many-to-one association to DatosMedico
+	//bi-directional many-to-one association to InformacionMedica
 	@ManyToOne
-	@JoinColumn(name="ID_DATOS_MEDICOS")
-	private DatosMedico datosMedico;
+	@JoinColumn(name="ID_INFORMACION_MEDICA")
+	private InformacionMedica informacionMedica;
 
 	public SuplementoNutricional() {
 	}
@@ -47,12 +47,12 @@ public class SuplementoNutricional implements Serializable {
 		this.descripcion = descripcion;
 	}
 
-	public DatosMedico getDatosMedico() {
-		return this.datosMedico;
+	public InformacionMedica getDatosMedico() {
+		return this.informacionMedica;
 	}
 
-	public void setDatosMedico(DatosMedico datosMedico) {
-		this.datosMedico = datosMedico;
+	public void setDatosMedico(InformacionMedica informacionMedica) {
+		this.informacionMedica = informacionMedica;
 	}
 
 }

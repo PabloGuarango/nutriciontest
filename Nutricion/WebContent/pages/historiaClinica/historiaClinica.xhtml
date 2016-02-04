@@ -12,19 +12,19 @@
 <h:body>
 	<h:form id="frmHistoriaClinica">
 		<p:panel header="Historia Clinica" id="panelContenedor">
-		<p:growl id="growl" showDetail="true" sticky="false" />
-			<p:outputPanel id="panelListado">
-				<p:panel rendered="#{historiaClinicaBean.listado}"
+			<p:growl id="growl" showDetail="true" sticky="false" />
+			<p:outputPanel id="panelListado" rendered="#{historiaClinicaBean.render=='Listado'}">
+				<p:panel 
 					header="Listado de Pacientes">
 					<p:separator />
 					<p:commandButton value="Nuevo" title="Nuevo"
-						update=":frmHistoriaClinica:panelContenedor"
+						update=":frmHistoriaClinica:panelContenedor :frmHistoriaClinica:panelNuevo"
 						icon="ui-icon-document"
-						actionListener="#{historiaClinicaBean.crear}"/>
+						actionListener="#{historiaClinicaBean.crear}" />
 					<p:commandButton value="Consultar" title="Consultar"
 						process="@form" update=":frmHistoriaClinica:panelContenedor growl"
 						icon="ui-icon-document"
-						actionListener="#{historiaClinicaBean.consultarHistorias}"/>
+						actionListener="#{historiaClinicaBean.consultarHistorias}" />
 					<p:separator />
 					<p:dataTable id="tablaPacientes"
 						emptyMessage="No existen registros"
@@ -41,19 +41,18 @@
 						</p:column>
 
 						<p:column styleClass="columnaDTCodigo"
-							sortBy="#{_paciente.apellido}" filterBy="#{_paciente.apellido}">
+							sortBy="#{_paciente.apellido}" filterBy="#{_paciente}">
 							<f:facet name="header">
 								<h:outputText value="Paciente" />
 							</f:facet>
-							<h:outputText value="#{_paciente.apellido} #{_paciente.nombre}" />
+							<h:outputText value="#{_paciente}" />
 						</p:column>
 					</p:dataTable>
 				</p:panel>
 			</p:outputPanel>
 			<ui:include
 				src="/pages/historiaClinica/consultaHistoriaClinica.xhtml" />
-				<ui:include
-				src="/pages/historiaClinica/nuevaHistoriaClinica.xhtml" />
+			<ui:include src="/pages/historiaClinica/nuevaHistoriaClinica.xhtml" />
 		</p:panel>
 	</h:form>
 </h:body>

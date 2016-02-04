@@ -17,7 +17,7 @@ import ec.edu.epn.nutricion.entities.Alimento;
 import ec.edu.epn.nutricion.entities.AntecedenteAlimentario;
 import ec.edu.epn.nutricion.entities.Antropometria;
 import ec.edu.epn.nutricion.entities.Cirugia;
-import ec.edu.epn.nutricion.entities.DatosMedico;
+import ec.edu.epn.nutricion.entities.InformacionMedica;
 import ec.edu.epn.nutricion.entities.HistoriaClinica;
 import ec.edu.epn.nutricion.entities.IntoleranciaAlergica;
 import ec.edu.epn.nutricion.entities.Medicamento;
@@ -41,7 +41,7 @@ public class HistoriaClinicaBean {
 	@EJB
 	private ServicioGenerico<Cirugia> servicioCirugia;
 	@EJB
-	private ServicioGenerico<DatosMedico> servicioDatosMedico;
+	private ServicioGenerico<InformacionMedica> servicioDatosMedico;
 	@EJB
 	private ServicioGenerico<HistoriaClinica> servicioHistoriaClinica;
 	@EJB
@@ -61,7 +61,7 @@ public class HistoriaClinicaBean {
 	private AntecedenteAlimentario antecedenteAlimentario;
 	private Antropometria antropometria;
 	private Cirugia cirugia;
-	private DatosMedico datosMedicos;
+	private InformacionMedica informacionMedicas;
 	private HistoriaClinica historiaClinica;
 	private IntoleranciaAlergica intoleranciaAlergia;
 	private Medicamento medicamento;
@@ -76,7 +76,7 @@ public class HistoriaClinicaBean {
 	private List<AntecedenteAlimentario> listaAntecedenteAlimentario;
 	private List<Antropometria> listaAntropometria;
 	private List<Cirugia> listaCirugia;
-	private List<DatosMedico> listaDatosMedicos;
+	private List<InformacionMedica> listaDatosMedicos;
 	private List<HistoriaClinica> listaHistoriaClinica;
 	private List<IntoleranciaAlergica> listaIntoleranciaAlergia;
 	private List<Medicamento> listaMedicamento;
@@ -85,9 +85,7 @@ public class HistoriaClinicaBean {
 	private List<ProblemaGastrointestinal> listaProblemaGastrointestinal;
 	private List<SuplementoNutricional> listaSuplementoNutricional;
 
-	private boolean nuevo = false;
-	private boolean consulta = false;
-	private boolean listado = true;
+	private String render = "Listado";
 	private String ejercicio = "false";
 	private String entrecomidas = "false";
 	private String cirugias = "false";
@@ -109,34 +107,33 @@ public class HistoriaClinicaBean {
 	private DataTable dtPacientes;
 	@PostConstruct
 	public void init() {
-		paciente=new Paciente();
+		paciente = new Paciente();
 		limpiar();
 		listaPaciente = servicioPaciente.obtenerListaCombo("Paciente");
 		System.out.println("hfgdxg");
 	}
 	public String crear() {
 		try {
-			if (paciente.getIdPaciente() ==0) {
-				nuevo = true;
-				listado = false;
+			if (paciente == null) {
+				render = "Nuevo";
 				paciente = new Paciente();
 				limpiar();
 				System.out.println(paciente);
+				System.out.println(render);
 			} else {
 				limpiar();
-				listado = false;
-				nuevo = true;
+				render = "Nuevo";
 				calcular();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return "/pages/historiaClinica/nuevaHistoriaClinica.jsf";
+		return null;
 	}
 	public String consultarHistorias() {
 		if (paciente != null) {
 			paciente = servicioPaciente.buscarPorId(paciente.getIdPaciente());
-			listado = false;
+			render = "Consultar";
 			cargar();
 		} else {
 			System.out.println("entro>>>>>>>>>>>>>>>");
@@ -155,26 +152,28 @@ public class HistoriaClinicaBean {
 			}
 		}
 		antecedenteAlimentario = paciente.getAntecedenteAlimentario();
-		for (Alimento al : antecedenteAlimentario.getListaAlimentos()) {
-			if ("preferido".equals(al.getDescripcionAlimento()))
-				listaAlimento.add(al);
-			else if ("no preferido".equals(al.getDescripcionAlimento()))
-				listaAlimentoNoPreferido.add(al);
-			else if ("refrigerio".equals(al.getDescripcionAlimento()))
-				listaRefrigerios.add(al);
+		if (antecedenteAlimentario != null) {
+			for (Alimento al : antecedenteAlimentario.getListaAlimentos()) {
+				if ("preferido".equals(al.getDescripcionAlimento()))
+					listaAlimento.add(al);
+				else if ("no preferido".equals(al.getDescripcionAlimento()))
+					listaAlimentoNoPreferido.add(al);
+				else if ("refrigerio".equals(al.getDescripcionAlimento()))
+					listaRefrigerios.add(al);
+			}
+			String[] habit = antecedenteAlimentario.getHabitos().split("~");
+			tabaco = habit[0];
+			alcohol = habit[1];
+			bebidasAzucaradas = habit[2];
+			listaProblemaGastrointestinal = antecedenteAlimentario.getListaProblemaGastrointestinals();
+			listaIntoleranciaAlergia = antecedenteAlimentario.getListaIntoleranciaAlergicas();
 		}
-		String[] habit = antecedenteAlimentario.getHabitos().split("~");
-		tabaco = habit[0];
-		alcohol = habit[1];
-		bebidasAzucaradas = habit[2];
-		listaProblemaGastrointestinal = antecedenteAlimentario.getListaProblemaGastrointestinals();
-		listaIntoleranciaAlergia = antecedenteAlimentario.getListaIntoleranciaAlergicas();
 		listaCirugia = paciente.getListaCirugias();
 
 	}
 	private void limpiar() {
 		antropometria = new Antropometria();
-		datosMedicos = new DatosMedico();
+		informacionMedicas = new InformacionMedica();
 		antecedenteAlimentario = new AntecedenteAlimentario();
 		historiaClinica = new HistoriaClinica();
 		listaAlimento = new ArrayList<Alimento>();
@@ -187,9 +186,6 @@ public class HistoriaClinicaBean {
 		listaPatologiaAsociadaPaciente = new ArrayList<PatologiaAsociada>();
 		listaProblemaGastrointestinal = new ArrayList<ProblemaGastrointestinal>();
 		listaIntoleranciaAlergia = new ArrayList<IntoleranciaAlergica>();
-		nuevo = false;
-		consulta = false;
-		listado = true;
 		ejercicio = "false";
 		entrecomidas = "false";
 		cirugias = "false";
@@ -201,10 +197,8 @@ public class HistoriaClinicaBean {
 		// servicioPatologiaAsociada.obtenerListaCombo("PatologiaAsociada");
 	}
 	public String cancelar() {
-		nuevo = false;
-		consulta = false;
-		listado = true;
-		return "/pages/historiaClinica/historiaClinica.jsf";
+		render = "Listado";
+		return "";
 	}
 	public String guardar() {
 		calcular();
@@ -212,9 +206,9 @@ public class HistoriaClinicaBean {
 		servicioAntecedenteAlimentario.guardar(antecedenteAlimentario);
 		paciente.setAntecedenteAlimentario(antecedenteAlimentario);
 		servicioPaciente.insertar(paciente);
-		servicioDatosMedico.guardar(datosMedicos);
+		servicioDatosMedico.guardar(informacionMedicas);
 		historiaClinica.setPaciente(paciente);
-		historiaClinica.setDatosMedico(datosMedicos);
+		historiaClinica.setDatosMedico(informacionMedicas);
 		servicioHistoriaClinica.guardar(historiaClinica);
 
 		for (PatologiaAsociada pa : listaPatologiaAsociadaFamiliar) {
@@ -259,16 +253,16 @@ public class HistoriaClinicaBean {
 			paciente.addCirugia(c);
 		}
 		for (Medicamento m : listaMedicamento) {
-			m.setDatosMedico(datosMedicos);
+			m.setDatosMedico(informacionMedicas);
 			servicioMedicamento.guardar(m);
-			datosMedicos.addMedicamento(m);
+			informacionMedicas.addMedicamento(m);
 		}
 		for (SuplementoNutricional sn : listaSuplementoNutricional) {
-			sn.setDatosMedico(datosMedicos);
+			sn.setDatosMedico(informacionMedicas);
 			servicioSuplementoNutricional.guardar(sn);
-			datosMedicos.addSuplementoNutricional(sn);
+			informacionMedicas.addSuplementoNutricional(sn);
 		}
-		antropometria.setDatosMedico(datosMedicos);
+		antropometria.setDatosMedico(informacionMedicas);
 		servicioAntropometria.guardar(antropometria);
 		paciente = null;
 		limpiar();
@@ -494,12 +488,12 @@ public class HistoriaClinicaBean {
 		this.cirugia = cirugia;
 	}
 
-	public DatosMedico getDatosMedicos() {
-		return datosMedicos;
+	public InformacionMedica getDatosMedicos() {
+		return informacionMedicas;
 	}
 
-	public void setDatosMedicos(DatosMedico datosMedicos) {
-		this.datosMedicos = datosMedicos;
+	public void setDatosMedicos(InformacionMedica informacionMedicas) {
+		this.informacionMedicas = informacionMedicas;
 	}
 
 	public HistoriaClinica getHistoriaClinica() {
@@ -590,11 +584,11 @@ public class HistoriaClinicaBean {
 		this.listaCirugia = listaCirugia;
 	}
 
-	public List<DatosMedico> getListaDatosMedicos() {
+	public List<InformacionMedica> getListaDatosMedicos() {
 		return listaDatosMedicos;
 	}
 
-	public void setListaDatosMedicos(List<DatosMedico> listaDatosMedicos) {
+	public void setListaDatosMedicos(List<InformacionMedica> listaDatosMedicos) {
 		this.listaDatosMedicos = listaDatosMedicos;
 	}
 
@@ -648,14 +642,6 @@ public class HistoriaClinicaBean {
 
 	public void setListaSuplementoNutricional(List<SuplementoNutricional> listaSuplementoNutricional) {
 		this.listaSuplementoNutricional = listaSuplementoNutricional;
-	}
-
-	public boolean isNuevo() {
-		return nuevo;
-	}
-
-	public void setNuevo(boolean nuevo) {
-		this.nuevo = nuevo;
 	}
 
 	public String getEjercicio() {
@@ -805,16 +791,10 @@ public class HistoriaClinicaBean {
 	public void setDtPacientes(DataTable dtPacientes) {
 		this.dtPacientes = dtPacientes;
 	}
-	public boolean isConsulta() {
-		return consulta;
+	public String getRender() {
+		return render;
 	}
-	public void setConsulta(boolean consulta) {
-		this.consulta = consulta;
-	}
-	public boolean isListado() {
-		return listado;
-	}
-	public void setListado(boolean listado) {
-		this.listado = listado;
+	public void setRender(String render) {
+		this.render = render;
 	}
 }

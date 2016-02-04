@@ -61,19 +61,19 @@ public class Paciente implements Serializable {
 	private String cedulaIdentidad;
 
 	// bi-directional many-to-one association to AntecedenteSalud
-	@OneToMany(mappedBy = "paciente")
+	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
 	private List<AntecedenteSalud> listaAntecedenteSaluds;
 
 	// bi-directional many-to-one association to Cirugia
-	@OneToMany(mappedBy = "paciente")
+	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
 	private List<Cirugia> listaCirugias;
 
 	// bi-directional many-to-one association to HistoriaClinica
-	@OneToMany(mappedBy = "paciente")
+	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
 	private List<HistoriaClinica> listaHistoriaClinicas;
 
 	// bi-directional many-to-one association to PatologiaAsociada
-	@OneToMany(mappedBy = "paciente")
+	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
 	private List<PatologiaAsociada> listaPatologiaAsociadas;
 	// bi-directional one-to-one association to AntecedenteAlimentario
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "paciente", cascade = CascadeType.ALL)
@@ -267,7 +267,7 @@ public class Paciente implements Serializable {
 
 	@Override
 	public String toString() {
-		return getNombre()+" "+getApellido();
+		return getApellido()+" "+getNombre();
 	}
 
 }

@@ -31,6 +31,7 @@ public class PacienteDao extends AbstractDao<Paciente> {
 	 */
 	@Override
 	public Paciente buscarPorId(Object idPaciente) {
+		
 		StringBuilder sqlPaciente = new StringBuilder();
 		sqlPaciente.append(" SELECT p ");
 		sqlPaciente.append(" FROM Paciente p ");
@@ -40,6 +41,15 @@ public class PacienteDao extends AbstractDao<Paciente> {
 		query.setParameter("idPaciente", idPaciente);
 		Paciente paciente=(Paciente) query.getSingleResult();
 		paciente.getIdPaciente();
+		StringBuilder sqlPatologias= new StringBuilder();
+		sqlPatologias.append(" SELECT C ");
+		sqlPatologias.append(" FROM PatologiaAsociada c ");
+		sqlPatologias.append(" LEFT JOIN c.paciente p ");
+		sqlPatologias.append(" WHERE p.idPaciente=:idPaciente ");
+		query = em.createQuery(sqlPatologias.toString());
+		query.setParameter("idPaciente", idPaciente);
+		paciente.setListaCirugias(query.getResultList());
+		paciente.getListaPatologiaAsociadas();
 		paciente.getListaAntecedenteSaluds().size();
 		paciente.getListaCirugias().size();
 		paciente.getListaHistoriaClinicas().size();

@@ -58,17 +58,17 @@ public class AntecedenteAlimentario implements Serializable {
 	private int vecesAlimenta;
 
 	// bi-directional many-to-one association to Alimento
-	@OneToMany(mappedBy = "antecedenteAlimentario")
+	@OneToMany(mappedBy = "antecedenteAlimentario", fetch=FetchType.EAGER)
 	private List<Alimento> listaAlimentos;
 
 	// bi-directional many-to-one association to IntoleranciaAlergica
-	@OneToMany(mappedBy = "antecedenteAlimentario")
+	@OneToMany(mappedBy = "antecedenteAlimentario", fetch=FetchType.EAGER)
 	private List<IntoleranciaAlergica> listaIntoleranciaAlergicas;
 
 	// bi-directional many-to-one association to ProblemaGastrointestinal
-	@OneToMany(mappedBy = "antecedenteAlimentario")
+	@OneToMany(mappedBy = "antecedenteAlimentario", fetch=FetchType.EAGER)
 	private List<ProblemaGastrointestinal> listaProblemaGastrointestinals;
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.EAGER)
 	@PrimaryKeyJoinColumn
 	private Paciente paciente;
 	public AntecedenteAlimentario() {

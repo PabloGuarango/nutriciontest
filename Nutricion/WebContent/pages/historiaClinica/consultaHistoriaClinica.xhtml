@@ -4,36 +4,33 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:s="http://jboss.com/products/seam/taglib"
 	xmlns:p="http://primefaces.org/ui" id="panelConsulta"
-	rendered="#{historiaClinicaBean.consulta}">
+	rendered="#{historiaClinicaBean.render=='Consultar'}">
 	<p:panel
-		header="Historia Clinica de #{historiaClinicaBean.paciente!=null?historiaClinicaBean.paciente.apellido:''}">
+		header="Historia Clinica de #{historiaClinicaBean.paciente!=null?historiaClinicaBean.paciente:''}">
 		<p:panelGrid id="consultaInformacionPaciente" columns="2">
 			<f:facet name="header">
 				<h:outputText value="Paciente" style="font-weight: bold;" />
 			</f:facet>
 			<p:panelGrid columns="4">
 				<h:outputLabel value="Nombre: " style="font-weight: bold;" />
-				<h:outputLabel 
-					value="#{historiaClinicaBean.paciente.nombre}" />
+				<h:outputLabel value="#{historiaClinicaBean.paciente.nombre}" />
 				<h:outputLabel value="Apellido:" style="font-weight: bold;" />
-				<p:inputText 
-					value="#{historiaClinicaBean.paciente.apellido}" />
+				<h:outputLabel value="#{historiaClinicaBean.paciente.apellido}" />
 				<h:outputLabel value="C.I.:" style="font-weight: bold;" />
-				<h:outputLabel 
+				<h:outputLabel
 					value="#{historiaClinicaBean.paciente.cedulaIdentidad}" />
 				<h:outputLabel value="Telefono:" style="font-weight: bold;" />
-				<h:outputLabel 
-					value="#{historiaClinicaBean.paciente.telefono}" required="true" />
+				<h:outputLabel value="#{historiaClinicaBean.paciente.telefono}"
+					required="true" />
 				<h:outputLabel value="Fecha de Nacimiento:"
 					style="font-weight: bold;" />
-				<p:calendar  disabled="true"
+				<p:calendar disabled="true"
 					value="#{historiaClinicaBean.paciente.fechaNacimiento}"
 					navigator="true" pattern="dd-MM-yyyy" />
 				<h:outputLabel value="Edad" style="font-weight: bold;" />
 				<h:outputLabel value="#{historiaClinicaBean.paciente.edad}" />
 				<h:outputLabel value="Sexo:" style="font-weight: bold;" />
-				<h:outputLabel 
-					value="#{historiaClinicaBean.paciente.sexo}" />
+				<h:outputLabel value="#{historiaClinicaBean.paciente.sexo}" />
 				<h:outputLabel value="Rol:" style="font-weight: bold;" />
 				<h:outputLabel disabled="true"
 					value="#{historiaClinicaBean.paciente.rol}" />
@@ -41,7 +38,7 @@
 		</p:panelGrid>
 		<p:separator />
 		<!-- 					antecedentesPatologicosFamiliares -->
-		<p:panelGrid columns="1" >
+		<p:panelGrid columns="1">
 			<f:facet name="header">
 				<h:outputText value="ANTECEDENTES PATOLÓGICOS FAMILIARES"
 					style="font-weight: bold;" />
@@ -63,38 +60,29 @@
 		</p:panelGrid>
 		<p:separator />
 		<!-- 					historialDietetico -->
-		<p:panelGrid columns="2" >
+		<p:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="HISTORIA DIETÉTICA" style="font-weight: bold;" />
 			</f:facet>
 			<h:outputLabel value="¿Cuántas comidas hace al día?"
 				style="font-weight: bold;" />
-			<p:inputText 
-				value="#{historiaClinicaBean.antecedenteAlimentario.vecesAlimenta}">
-				<p:ajax process="@this" global="false" />
-			</p:inputText>
+			<h:outputLabel
+				value="#{historiaClinicaBean.antecedenteAlimentario.vecesAlimenta}" />
 			<h:outputLabel value="¿Dónde?" style="font-weight: bold;" />
-			<p:inputText 
-				value="#{historiaClinicaBean.antecedenteAlimentario.dondeAlimenta}">
-				<p:ajax process="@this" global="false" />
-			</p:inputText>
+			<h:outputLabel
+				value="#{historiaClinicaBean.antecedenteAlimentario.dondeAlimenta}" />
 			<h:outputLabel value="¿Quién prepara?" style="font-weight: bold;" />
-			<p:inputText 
-				value="#{historiaClinicaBean.antecedenteAlimentario.quienPreparaAlimento}">
-				<p:ajax process="@this" global="false" />
-			</p:inputText>
+			<h:outputLabel
+				value="#{historiaClinicaBean.antecedenteAlimentario.quienPreparaAlimento}" />
 			<h:outputLabel value="Vive con" style="font-weight: bold;" />
-			<p:inputText 
-				value="#{historiaClinicaBean.antecedenteAlimentario.quienPreparaAlimento}">
-				<p:ajax process="@this" global="false" />
-			</p:inputText>
+			<h:outputLabel
+				value="#{historiaClinicaBean.antecedenteAlimentario.quienPreparaAlimento}" />
 			<h:outputLabel value="Entrecomidas" style="font-weight: bold;"
 				rendered="#{historiaClinicaBean.antecedenteAlimentario.entrecomidas!=null}" />
 			<h:outputLabel
 				value="#{historiaClinicaBean.antecedenteAlimentario.entrecomidas}"
-				rendered="#{historiaClinicaBean.antecedenteAlimentario.entrecomidas!=null}"
-				/>
-				
+				rendered="#{historiaClinicaBean.antecedenteAlimentario.entrecomidas!=null}" />
+
 			<h:outputLabel value="Apetito:" style="font-weight: bold;" />
 			<h:outputLabel
 				value="#{historiaClinicaBean.antecedenteAlimentario.apetito}" />
@@ -119,9 +107,9 @@
 			<p:panelGrid columns="2">
 				<p:dataTable value="#{historiaClinicaBean.listaAlimentoNoPreferido}"
 					rendered="#{historiaClinicaBean.listaAlimentoNoPreferido.size()!=0}"
-					binding="#{historiaClinicaBean.dtAlimentoNoPreferido}" emptyMessage=""
-					var="_aliment" paginator="true" paginatorPosition="bottom"
-					style="width:100%">
+					binding="#{historiaClinicaBean.dtAlimentoNoPreferido}"
+					emptyMessage="" var="_aliment" paginator="true"
+					paginatorPosition="bottom" style="width:100%">
 					<p:column headerText="Alimentos No Preferidos">
 						<h:outputLabel value="#{_aliment.nombreAlimento}" />
 					</p:column>
@@ -139,19 +127,22 @@
 			</p:panelGrid>
 			<h:outputLabel value="Agua Sola (vasos/día):"
 				style="font-weight: bold;" />
-			<h:outputLabel value="#{historiaClinicaBean.antecedenteAlimentario.aguaSola}" />
+			<h:outputLabel
+				value="#{historiaClinicaBean.antecedenteAlimentario.aguaSola}" />
 			<h:outputLabel value="Líquidos (vasos/día):"
 				style="font-weight: bold;" />
-			<h:outputLabel value="#{historiaClinicaBean.antecedenteAlimentario.liquidos}"/>
+			<h:outputLabel
+				value="#{historiaClinicaBean.antecedenteAlimentario.liquidos}" />
 			<h:outputLabel value="Refrigerios:" style="font-weight: bold;" />
 			<p:panelGrid columns="2">
 				<p:dataTable value="#{historiaClinicaBean.listaRefrigerios}"
 					rendered="#{historiaClinicaBean.listaRefrigerios.size()!=0}"
-					binding="#{historiaClinicaBean.dtRefrigerio}" emptyMessage="" var="_refri"
-					paginator="true" paginatorPosition="bottom" style="width:100%">
+					binding="#{historiaClinicaBean.dtRefrigerio}" emptyMessage=""
+					var="_refri" paginator="true" paginatorPosition="bottom"
+					style="width:100%">
 
 					<p:column headerText="Refrigerios">
-						<h:outputLabel value="#{_refri.nombreAlimento}"/>
+						<h:outputLabel value="#{_refri.nombreAlimento}" />
 					</p:column>
 				</p:dataTable>
 			</p:panelGrid>
@@ -159,14 +150,15 @@
 			<h:outputLabel value="Problemas Gastroinstestinales:"
 				style="font-weight: bold;" />
 			<p:panelGrid columns="2">
-				<p:dataTable value="#{historiaClinicaBean.listaProblemaGastrointestinal}"
+				<p:dataTable
+					value="#{historiaClinicaBean.listaProblemaGastrointestinal}"
 					rendered="#{historiaClinicaBean.listaProblemaGastrointestinal.size()!=0}"
 					binding="#{historiaClinicaBean.dtProblemasGatrointestinales}"
 					emptyMessage="" var="_problem" paginator="true"
 					paginatorPosition="bottom" style="width:100%">
 
 					<p:column headerText="Problema Gastrointestinal">
-						<h:outputLabel value="#{_problem.descripcion}"/>
+						<h:outputLabel value="#{_problem.descripcion}" />
 					</p:column>
 				</p:dataTable>
 			</p:panelGrid>
@@ -175,51 +167,56 @@
 			<p:panelGrid columns="2">
 				<p:dataTable value="#{historiaClinicaBean.listaIntoleranciaAlergia}"
 					rendered="#{historiaClinicaBean.listaIntoleranciaAlergia.size()!=0}"
-					binding="#{historiaClinicaBean.dtIntoleranciaAlergica}" emptyMessage=""
-					var="_intolerancia" paginator="true" paginatorPosition="bottom"
-					style="width:100%">
+					binding="#{historiaClinicaBean.dtIntoleranciaAlergica}"
+					emptyMessage="" var="_intolerancia" paginator="true"
+					paginatorPosition="bottom" style="width:100%">
 
 
 					<p:column headerText="Intolerancia o alergia">
-						<h:outputLabel value="#{_intolerancia.descripcion}"/>
+						<h:outputLabel value="#{_intolerancia.descripcion}" />
 					</p:column>
 				</p:dataTable>
 			</p:panelGrid>
 			<h:outputLabel value="Patologia asociadas:"
 				style="font-weight: bold;" />
 			<p:panelGrid columns="2">
-				
-				<p:dataTable value="#{historiaClinicaBean.listaPatologiaAsociadaPaciente}"
-					binding="#{historiaClinicaBean.dtPatologiaPaciente}" emptyMessage=""
-					var="_patologiaPaciente" paginator="true"
+
+				<p:dataTable
+					value="#{historiaClinicaBean.listaPatologiaAsociadaPaciente}"
+					binding="#{historiaClinicaBean.dtPatologiaPaciente}"
+					emptyMessage="" var="_patologiaPaciente" paginator="true"
 					paginatorPosition="bottom" style="width:100%"
 					rendered="#{historiaClinicaBean.listaPatologiaAsociadaPaciente.size()>0}">
 					<p:column headerText="Patologias Asociadas">
-						<h:outputLabel value="#{_patologiaPaciente.nombre}"/>
+						<h:outputLabel value="#{_patologiaPaciente.nombre}" />
 					</p:column>
 				</p:dataTable>
 			</p:panelGrid>
 		</p:panelGrid>
 		<p:separator />
 		<!-- 					informacionObjetiva -->
-		<p:panelGrid columns="2" >
+		<p:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="INFORMACION OBJETIVA"
 					style="font-weight: bold;" />
 			</f:facet>
-			<h:outputLabel value="Cirugias" style="font-weight: bold;" rendered="#{historiaClinicaBean.listaCirugia.size()>0}"/>
+			<h:outputLabel value="Cirugias" style="font-weight: bold;"
+				rendered="#{historiaClinicaBean.listaCirugia.size()>0}" />
 			<p:dataTable value="#{historiaClinicaBean.listaCirugia}"
 				rendered="#{historiaClinicaBean.listaCirugia.size()>0}"
-				binding="#{historiaClinicaBean.dtCirugia}" emptyMessage="" var="_ciru"
-				paginator="true" paginatorPosition="bottom" style="width:100%">
+				binding="#{historiaClinicaBean.dtCirugia}" emptyMessage=""
+				var="_ciru" paginator="true" paginatorPosition="bottom"
+				style="width:100%">
 
 				<p:column headerText="Cirugias">
-					<h:outputLabel value="#{_ciru.descripcion}"/>
+					<h:outputLabel value="#{_ciru.descripcion}" />
 				</p:column>
 			</p:dataTable>
-		
+
 		</p:panelGrid>
 		<p:separator />
-		
+		<p:commandButton value="Aceptar" process="@this"
+			icon="ui-icon-check" action="#{historiaClinicaBean.cancelar()}"
+			update="@form" />
 	</p:panel>
 </p:outputPanel>

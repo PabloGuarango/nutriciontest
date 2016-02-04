@@ -28,10 +28,10 @@ public class PatologiaAsociada implements Serializable {
 	// Familiar con ANTECEDENTES PATOLÓGICOS del paciente
 	@Column(name = "FAMILIAR")
 	private String familiar;
-	// bi-directional many-to-one association to DatosMedico
+	// bi-directional many-to-one association to InformacionMedica
 	@ManyToOne
-	@JoinColumn(name = "ID_DATOS_MEDICOS")
-	private DatosMedico datosMedico;
+	@JoinColumn(name = "ID_INFORMACION_MEDICA")
+	private InformacionMedica informacionMedica;
 	@ManyToOne
 	@JoinColumn(name = "ID_PACIENTE")
 	private Paciente paciente;
@@ -63,12 +63,12 @@ public class PatologiaAsociada implements Serializable {
 		this.nombre = nombrePatologia;
 	}
 
-	public DatosMedico getDatosMedico() {
-		return this.datosMedico;
+	public InformacionMedica getDatosMedico() {
+		return this.informacionMedica;
 	}
 
-	public void setDatosMedico(DatosMedico datosMedico) {
-		this.datosMedico = datosMedico;
+	public void setDatosMedico(InformacionMedica informacionMedica) {
+		this.informacionMedica = informacionMedica;
 	}
 
 	public String getFamiliar() {

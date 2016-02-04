@@ -75,14 +75,14 @@ public class Antropometria implements Serializable {
 
 	private double talla;
 
-	//bi-directional many-to-one association to DatosMedico
+	//bi-directional many-to-one association to InformacionMedica
 	@ManyToOne
-	@JoinColumn(name="ID_DATOS_MEDICOS")
-	private DatosMedico datosMedico;
+	@JoinColumn(name="ID_INFORMACION_MEDICA")
+	private InformacionMedica informacionMedica;
 
-	//bi-directional many-to-one association to DatosMedico
+	//bi-directional many-to-one association to InformacionMedica
 	@OneToMany(mappedBy="antropometria")
-	private List<DatosMedico> datosMedicos;
+	private List<InformacionMedica> informacionMedicas;
 
 	public Antropometria() {
 	}
@@ -239,36 +239,36 @@ public class Antropometria implements Serializable {
 		this.talla = talla;
 	}
 
-	public DatosMedico getDatosMedico() {
-		return this.datosMedico;
+	public InformacionMedica getDatosMedico() {
+		return this.informacionMedica;
 	}
 
-	public void setDatosMedico(DatosMedico datosMedico) {
-		this.datosMedico = datosMedico;
+	public void setDatosMedico(InformacionMedica informacionMedica) {
+		this.informacionMedica = informacionMedica;
 	}
 
-	public List<DatosMedico> getDatosMedicos() {
-		if(this.datosMedicos==null)
-			this.datosMedicos=new ArrayList<DatosMedico>();
-		return this.datosMedicos;
+	public List<InformacionMedica> getDatosMedicos() {
+		if(this.informacionMedicas==null)
+			this.informacionMedicas=new ArrayList<InformacionMedica>();
+		return this.informacionMedicas;
 	}
 
-	public void setDatosMedicos(List<DatosMedico> datosMedicos) {
-		this.datosMedicos = datosMedicos;
+	public void setDatosMedicos(List<InformacionMedica> informacionMedicas) {
+		this.informacionMedicas = informacionMedicas;
 	}
 
-	public DatosMedico addDatosMedico(DatosMedico datosMedico) {
-		getDatosMedicos().add(datosMedico);
-		datosMedico.setAntropometria(this);
+	public InformacionMedica addDatosMedico(InformacionMedica informacionMedica) {
+		getDatosMedicos().add(informacionMedica);
+		informacionMedica.setAntropometria(this);
 
-		return datosMedico;
+		return informacionMedica;
 	}
 
-	public DatosMedico removeDatosMedico(DatosMedico datosMedico) {
-		getDatosMedicos().remove(datosMedico);
-		datosMedico.setAntropometria(null);
+	public InformacionMedica removeDatosMedico(InformacionMedica informacionMedica) {
+		getDatosMedicos().remove(informacionMedica);
+		informacionMedica.setAntropometria(null);
 
-		return datosMedico;
+		return informacionMedica;
 	}
 
 }
