@@ -1,6 +1,5 @@
 package ec.edu.epn.nutricion.entities;
 
-import java.io.Serializable;
 
 import javax.persistence.*;
 
@@ -11,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "patologia_asociada")
 @NamedQuery(name = "PatologiaAsociada.findAll", query = "SELECT p FROM PatologiaAsociada p")
-public class PatologiaAsociada implements Serializable {
+public class PatologiaAsociada extends EntidadBase {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -29,10 +28,10 @@ public class PatologiaAsociada implements Serializable {
 	@Column(name = "FAMILIAR")
 	private String familiar;
 	// bi-directional many-to-one association to InformacionMedica
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name = "ID_INFORMACION_MEDICA")
 	private InformacionMedica informacionMedica;
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name = "ID_PACIENTE")
 	private Paciente paciente;
 
@@ -93,6 +92,11 @@ public class PatologiaAsociada implements Serializable {
 
 	public void setPaciente(Paciente paciente2) {
 		this.paciente = paciente2;
+	}
+
+	@Override
+	public int getId() {
+		return idPatologiaAsociada;
 	}
 
 }

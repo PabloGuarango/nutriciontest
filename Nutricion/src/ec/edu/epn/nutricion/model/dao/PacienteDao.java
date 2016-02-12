@@ -1,6 +1,7 @@
 package ec.edu.epn.nutricion.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -32,27 +33,27 @@ public class PacienteDao extends AbstractDao<Paciente> {
 	@Override
 	public Paciente buscarPorId(Object idPaciente) {
 		
-		StringBuilder sqlPaciente = new StringBuilder();
-		sqlPaciente.append(" SELECT p ");
-		sqlPaciente.append(" FROM Paciente p ");
-		sqlPaciente.append(" LEFT JOIN p.antecedenteAlimentario al ");
-		sqlPaciente.append(" WHERE p.idPaciente=:idPaciente ");
-		Query query = em.createQuery(sqlPaciente.toString());
-		query.setParameter("idPaciente", idPaciente);
-		Paciente paciente=(Paciente) query.getSingleResult();
-		paciente.getIdPaciente();
-		StringBuilder sqlPatologias= new StringBuilder();
-		sqlPatologias.append(" SELECT C ");
-		sqlPatologias.append(" FROM PatologiaAsociada c ");
-		sqlPatologias.append(" LEFT JOIN c.paciente p ");
-		sqlPatologias.append(" WHERE p.idPaciente=:idPaciente ");
-		query = em.createQuery(sqlPatologias.toString());
-		query.setParameter("idPaciente", idPaciente);
-		paciente.setListaCirugias(query.getResultList());
-		paciente.getListaPatologiaAsociadas();
-		paciente.getListaAntecedenteSaluds().size();
-		paciente.getListaCirugias().size();
-		paciente.getListaHistoriaClinicas().size();
+//		StringBuilder sqlPaciente = new StringBuilder();
+//		sqlPaciente.append(" SELECT p ");
+//		sqlPaciente.append(" FROM Paciente p ");
+//		sqlPaciente.append(" LEFT JOIN p.antecedenteAlimentario al ");
+//		sqlPaciente.append(" WHERE p.idPaciente=:idPaciente ");
+//		Query query = em.createQuery(sqlPaciente.toString());
+//		query.setParameter("idPaciente", idPaciente);
+//		Paciente paciente=(Paciente) query.getSingleResult();
+//		paciente.getIdPaciente();
+//		StringBuilder sqlPatologias= new StringBuilder();
+//		sqlPatologias.append(" SELECT C ");
+//		sqlPatologias.append(" FROM PatologiaAsociada c ");
+//		sqlPatologias.append(" LEFT JOIN c.paciente p ");
+//		sqlPatologias.append(" WHERE p.idPaciente=:idPaciente ");
+//		query = em.createQuery(sqlPatologias.toString());
+//		query.setParameter("idPaciente", idPaciente);
+//		paciente.setListaCirugias(query.getResultList());
+//		paciente.getListaPatologiasAsociadas();
+//		paciente.getListaAntecedentesSalud().size();
+//		paciente.getListaCirugias().size();
+//		paciente.getListaHistoriasClinicas().size();
 //		StringBuilder sqlCirugias = new StringBuilder();
 //		sqlCirugias.append(" SELECT C ");
 //		sqlCirugias.append(" FROM Cirugia c ");
@@ -79,7 +80,7 @@ public class PacienteDao extends AbstractDao<Paciente> {
 //		sql.append(" LEFT JOIN al.listaIntoleranciaAlergicas lia ");
 //		sql.append(" LEFT JOIN al.listaProblemaGastrointestinals lpg ");
 		
-		return paciente;
+		return super.buscarPorId(idPaciente);
 	}
 	public Paciente cargarDetalle(int id) {
 		// Recupera una entidad manejada
@@ -89,14 +90,14 @@ public class PacienteDao extends AbstractDao<Paciente> {
 		paciente.getAntecedenteAlimentario().getListaProblemaGastrointestinals().size();
 		paciente.getAntecedenteAlimentario().getListaAlimentos().size();
 		paciente.getAntecedenteAlimentario().getListaIntoleranciaAlergicas().size();
-		paciente.getListaAntecedenteSaluds().size();
+		paciente.getListaAntecedentesSalud().size();
 		paciente.getListaCirugias().size();
-		paciente.getListaHistoriaClinicas().size();
-		for (HistoriaClinica hc : paciente.getListaHistoriaClinicas()) {
+		paciente.getListaHistoriasClinicas().size();
+		for (HistoriaClinica hc : paciente.getListaHistoriasClinicas()) {
 			hc.getIdHistoriaClinica();
-			hc.getDatosMedico().getAntropometrias().size();
+			hc.getDatosMedico().getListaAntropometria().size();
 		}
-		paciente.getListaPatologiaAsociadas().size();
+		paciente.getListaPatologiasAsociadas().size();
 		return paciente;
 	}
 	@Override
@@ -120,16 +121,20 @@ public class PacienteDao extends AbstractDao<Paciente> {
 		super.refrescar(entidad);
 	}
 	@Override
-	public List<Paciente> buscarTodos(String claseEntidad2) {
-		return super.buscarTodos(claseEntidad2);
-	}
-	@Override
 	public void detach(Paciente entidad) {
 		super.detach(entidad);
 	}
 	@Override
 	public void flush() {
 		super.flush();
+	}
+	@Override
+	public void guardar(Paciente entidad) {
+		super.guardar(entidad);
+	}
+	@Override
+	public List<Paciente> obtenerListaCombo(String sortField, boolean sortOrder, Map<String, String> filtros) {
+		return super.obtenerListaCombo(sortField, sortOrder, filtros);
 	}
 	
 }

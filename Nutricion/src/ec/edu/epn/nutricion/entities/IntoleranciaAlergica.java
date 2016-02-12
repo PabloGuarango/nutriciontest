@@ -1,7 +1,5 @@
 package ec.edu.epn.nutricion.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.*;
 
 
@@ -13,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="intolerancia_alergica")
 @NamedQuery(name="IntoleranciaAlergica.findAll", query="SELECT i FROM IntoleranciaAlergica i")
-public class IntoleranciaAlergica implements Serializable {
+public class IntoleranciaAlergica extends EntidadBase {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -24,7 +22,7 @@ public class IntoleranciaAlergica implements Serializable {
 	private String descripcion;
 
 	//bi-directional many-to-one association to AntecedenteAlimentario
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="ID_ANTECEDENTES_ALIMENTARIOS")
 	private AntecedenteAlimentario antecedenteAlimentario;
 
@@ -53,6 +51,11 @@ public class IntoleranciaAlergica implements Serializable {
 
 	public void setAntecedentesAlimentario(AntecedenteAlimentario antecedenteAlimentario) {
 		this.antecedenteAlimentario = antecedenteAlimentario;
+	}
+
+	@Override
+	public int getId() {
+		return idIntoleranciaAlergica;
 	}
 
 }

@@ -1,7 +1,5 @@
 package ec.edu.epn.nutricion.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.*;
 
 import java.util.ArrayList;
@@ -14,7 +12,7 @@ import java.util.List;
  */
 @Entity
 @NamedQuery(name="Antropometria.findAll", query="SELECT a FROM Antropometria a")
-public class Antropometria implements Serializable {
+public class Antropometria extends EntidadBase {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -76,13 +74,13 @@ public class Antropometria implements Serializable {
 	private double talla;
 
 	//bi-directional many-to-one association to InformacionMedica
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="ID_INFORMACION_MEDICA")
 	private InformacionMedica informacionMedica;
 
 	//bi-directional many-to-one association to InformacionMedica
-	@OneToMany(mappedBy="antropometria")
-	private List<InformacionMedica> informacionMedicas;
+	@OneToMany(mappedBy="antropometria",cascade=CascadeType.ALL)
+	private List<InformacionMedica> listaInformacionMedicas;
 
 	public Antropometria() {
 	}
@@ -247,28 +245,43 @@ public class Antropometria implements Serializable {
 		this.informacionMedica = informacionMedica;
 	}
 
-	public List<InformacionMedica> getDatosMedicos() {
-		if(this.informacionMedicas==null)
-			this.informacionMedicas=new ArrayList<InformacionMedica>();
-		return this.informacionMedicas;
+	public InformacionMedica getInformacionMedica() {
+		return informacionMedica;
 	}
 
-	public void setDatosMedicos(List<InformacionMedica> informacionMedicas) {
-		this.informacionMedicas = informacionMedicas;
+	public void setInformacionMedica(InformacionMedica informacionMedica) {
+		this.informacionMedica = informacionMedica;
 	}
 
-	public InformacionMedica addDatosMedico(InformacionMedica informacionMedica) {
-		getDatosMedicos().add(informacionMedica);
+	public List<InformacionMedica> getListaInformacionMedicas() {
+		return listaInformacionMedicas;
+	}
+
+	public void setListaInformacionMedicas(List<InformacionMedica> listaInformacionMedicas) {
+		this.listaInformacionMedicas = listaInformacionMedicas;
+	}
+
+	public InformacionMedica addInformacionMedica(InformacionMedica informacionMedica) {
+		if(getListaInformacionMedicas()==null)
+			listaInformacionMedicas=new ArrayList<InformacionMedica>();
+		getListaInformacionMedicas().add(informacionMedica);
 		informacionMedica.setAntropometria(this);
 
 		return informacionMedica;
 	}
 
-	public InformacionMedica removeDatosMedico(InformacionMedica informacionMedica) {
-		getDatosMedicos().remove(informacionMedica);
+	public InformacionMedica removeInformacionMedica(InformacionMedica informacionMedica) {
+		if(getListaInformacionMedicas()==null)
+			return null;
+		getListaInformacionMedicas().remove(informacionMedica);
 		informacionMedica.setAntropometria(null);
 
 		return informacionMedica;
+	}
+
+	@Override
+	public int getId() {
+		return this.idAntropometria;
 	}
 
 }

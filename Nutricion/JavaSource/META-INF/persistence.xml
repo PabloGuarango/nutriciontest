@@ -17,6 +17,7 @@
 		<class>ec.edu.epn.nutricion.entities.PatologiaAsociada</class>
 		<class>ec.edu.epn.nutricion.entities.ProblemaGastrointestinal</class>
 		<class>ec.edu.epn.nutricion.entities.SuplementoNutricional</class>
+		<class>ec.edu.epn.nutricion.entities.EntidadBase</class>
 
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />

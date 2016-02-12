@@ -1,8 +1,9 @@
 package ec.edu.epn.nutricion.entities;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,7 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "antecedentes_alimentarios")
 @NamedQuery(name = "AntecedenteAlimentario.findAll", query = "SELECT a FROM AntecedenteAlimentario a")
-public class AntecedenteAlimentario implements Serializable {
+public class AntecedenteAlimentario extends EntidadBase {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -58,17 +59,17 @@ public class AntecedenteAlimentario implements Serializable {
 	private int vecesAlimenta;
 
 	// bi-directional many-to-one association to Alimento
-	@OneToMany(mappedBy = "antecedenteAlimentario", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "antecedenteAlimentario", fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 	private List<Alimento> listaAlimentos;
 
 	// bi-directional many-to-one association to IntoleranciaAlergica
-	@OneToMany(mappedBy = "antecedenteAlimentario", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "antecedenteAlimentario", fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 	private List<IntoleranciaAlergica> listaIntoleranciaAlergicas;
 
 	// bi-directional many-to-one association to ProblemaGastrointestinal
-	@OneToMany(mappedBy = "antecedenteAlimentario", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "antecedenteAlimentario", fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 	private List<ProblemaGastrointestinal> listaProblemaGastrointestinals;
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@PrimaryKeyJoinColumn
 	private Paciente paciente;
 	public AntecedenteAlimentario() {
@@ -171,12 +172,16 @@ public class AntecedenteAlimentario implements Serializable {
 	}
 
 	public Alimento addAlimento(Alimento alimento) {
+		if (getListaAlimentos() == null)
+			listaAlimentos = new ArrayList<Alimento>();
 		getListaAlimentos().add(alimento);
 		alimento.setAntecedentesAlimentario(this);
 		return alimento;
 	}
 
 	public Alimento removeAlimento(Alimento alimento) {
+		if (getListaAlimentos() == null)
+			return null;
 		getListaAlimentos().remove(alimento);
 		alimento.setAntecedentesAlimentario(null);
 
@@ -184,6 +189,8 @@ public class AntecedenteAlimentario implements Serializable {
 	}
 
 	public IntoleranciaAlergica addIntoleranciaAlergica(IntoleranciaAlergica intoleranciaAlergica) {
+		if (getListaIntoleranciaAlergicas() == null)
+			listaIntoleranciaAlergicas = new ArrayList<IntoleranciaAlergica>();
 		getListaIntoleranciaAlergicas().add(intoleranciaAlergica);
 		intoleranciaAlergica.setAntecedentesAlimentario(this);
 
@@ -191,6 +198,8 @@ public class AntecedenteAlimentario implements Serializable {
 	}
 
 	public IntoleranciaAlergica removeIntoleranciaAlergica(IntoleranciaAlergica intoleranciaAlergica) {
+		if (getListaIntoleranciaAlergicas() == null)
+			return null;
 		getListaIntoleranciaAlergicas().remove(intoleranciaAlergica);
 		intoleranciaAlergica.setAntecedentesAlimentario(null);
 
@@ -198,6 +207,8 @@ public class AntecedenteAlimentario implements Serializable {
 	}
 
 	public ProblemaGastrointestinal addProblemaGastrointestinal(ProblemaGastrointestinal problemaGastrointestinal) {
+		if (getListaProblemaGastrointestinals() == null)
+			listaProblemaGastrointestinals = new ArrayList<ProblemaGastrointestinal>();
 		getListaProblemaGastrointestinals().add(problemaGastrointestinal);
 		problemaGastrointestinal.setAntecedentesAlimentario(this);
 
@@ -205,6 +216,8 @@ public class AntecedenteAlimentario implements Serializable {
 	}
 
 	public ProblemaGastrointestinal removeProblemaGastrointestinal(ProblemaGastrointestinal problemaGastrointestinal) {
+		if (getListaProblemaGastrointestinals() == null)
+			return null;
 		getListaProblemaGastrointestinals().remove(problemaGastrointestinal);
 		problemaGastrointestinal.setAntecedentesAlimentario(null);
 
@@ -233,5 +246,10 @@ public class AntecedenteAlimentario implements Serializable {
 
 	public void setListaProblemaGastrointestinals(List<ProblemaGastrointestinal> listaProblemaGastrointestinals) {
 		this.listaProblemaGastrointestinals = listaProblemaGastrointestinals;
+	}
+
+	@Override
+	public int getId() {
+		return this.idAntecedenteAlimentario;
 	}
 }

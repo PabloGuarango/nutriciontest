@@ -1,6 +1,7 @@
 package ec.edu.epn.nutricion.model.servicio.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -47,10 +48,7 @@ public class ServicioPacienteImpl implements ServicioPaciente {
 	public void refrescar(Paciente entidad) {
 		pacienteDao.refrescar(entidad);
 	}
-	@Override
-	public List<Paciente> buscarTodos(String claseEntidad2) {
-		return pacienteDao.buscarTodos(claseEntidad2);
-	}
+	
 	@Override
 	public void detach(Paciente entidad) {
 		pacienteDao.detach(entidad);
@@ -60,8 +58,8 @@ public class ServicioPacienteImpl implements ServicioPaciente {
 		pacienteDao.flush();
 	}
 	@Override
-	public List<Paciente> obtenerListaCombo(String string) {
-		return pacienteDao.buscarTodos(string);
+	public List<Paciente> obtenerListaCombo(String sortField, boolean sortOrder, Map<String, String> filters) {
+		return pacienteDao.obtenerListaCombo(sortField, sortOrder, filters);
 	}
-
+	
 }

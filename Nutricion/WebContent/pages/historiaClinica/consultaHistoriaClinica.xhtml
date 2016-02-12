@@ -38,22 +38,22 @@
 		</p:panelGrid>
 		<p:separator />
 		<!-- 					antecedentesPatologicosFamiliares -->
-		<p:panelGrid columns="1">
+		<p:panelGrid columns="1" id="consultaAntecedentesFamiliares">
 			<f:facet name="header">
 				<h:outputText value="ANTECEDENTES PATOLÓGICOS FAMILIARES"
 					style="font-weight: bold;" />
 			</f:facet>
-			<p:dataTable
+			<p:dataTable 
 				value="#{historiaClinicaBean.listaPatologiaAsociadaFamiliar}"
 				binding="#{historiaClinicaBean.dtPatologiaFamiliar}" emptyMessage=""
 				var="_patologiaFamiliar" paginator="true" paginatorPosition="bottom"
 				style="width:100%"
-				rendered="#{historiaClinicaBean.listaPatologiaAsociadaFamiliar.size()>0}">
+				rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 
-				<p:column headerText="Familiar">
-					<h:outputLabel value="#{_patologiaFamiliar.familiar}" />
+				<p:column headerText="Familiar" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
+					<h:outputLabel value="sdasd #{_patologiaFamiliar.familiar}" />
 				</p:column>
-				<p:column headerText="Patologias Asociadas">
+				<p:column headerText="Patologias Asociadas" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 					<h:outputLabel value="#{_patologiaFamiliar.nombre}" />
 				</p:column>
 			</p:dataTable>
@@ -96,7 +96,7 @@
 					var="_alimento" paginator="true" paginatorPosition="bottom"
 					style="width:100%">
 
-					<p:column headerText="Alimentos Preferidos">
+					<p:column headerText="Alimentos Preferidos" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 						<h:outputLabel value="#{_alimento.nombreAlimento}" />
 					</p:column>
 				</p:dataTable>
@@ -110,7 +110,7 @@
 					binding="#{historiaClinicaBean.dtAlimentoNoPreferido}"
 					emptyMessage="" var="_aliment" paginator="true"
 					paginatorPosition="bottom" style="width:100%">
-					<p:column headerText="Alimentos No Preferidos">
+					<p:column headerText="Alimentos No Preferidos" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 						<h:outputLabel value="#{_aliment.nombreAlimento}" />
 					</p:column>
 				</p:dataTable>
@@ -141,7 +141,7 @@
 					var="_refri" paginator="true" paginatorPosition="bottom"
 					style="width:100%">
 
-					<p:column headerText="Refrigerios">
+					<p:column headerText="Refrigerios" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 						<h:outputLabel value="#{_refri.nombreAlimento}" />
 					</p:column>
 				</p:dataTable>
@@ -157,7 +157,7 @@
 					emptyMessage="" var="_problem" paginator="true"
 					paginatorPosition="bottom" style="width:100%">
 
-					<p:column headerText="Problema Gastrointestinal">
+					<p:column headerText="Problema Gastrointestinal" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 						<h:outputLabel value="#{_problem.descripcion}" />
 					</p:column>
 				</p:dataTable>
@@ -172,7 +172,7 @@
 					paginatorPosition="bottom" style="width:100%">
 
 
-					<p:column headerText="Intolerancia o alergia">
+					<p:column headerText="Intolerancia o alergia" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 						<h:outputLabel value="#{_intolerancia.descripcion}" />
 					</p:column>
 				</p:dataTable>
@@ -187,7 +187,7 @@
 					emptyMessage="" var="_patologiaPaciente" paginator="true"
 					paginatorPosition="bottom" style="width:100%"
 					rendered="#{historiaClinicaBean.listaPatologiaAsociadaPaciente.size()>0}">
-					<p:column headerText="Patologias Asociadas">
+					<p:column headerText="Patologias Asociadas" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 						<h:outputLabel value="#{_patologiaPaciente.nombre}" />
 					</p:column>
 				</p:dataTable>
@@ -208,7 +208,7 @@
 				var="_ciru" paginator="true" paginatorPosition="bottom"
 				style="width:100%">
 
-				<p:column headerText="Cirugias">
+				<p:column headerText="Cirugias" rendered="#{historiaClinicaBean.paciente.idPaciente>0}">
 					<h:outputLabel value="#{_ciru.descripcion}" />
 				</p:column>
 			</p:dataTable>

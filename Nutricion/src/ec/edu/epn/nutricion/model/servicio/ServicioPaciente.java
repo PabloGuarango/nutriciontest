@@ -1,6 +1,7 @@
 package ec.edu.epn.nutricion.model.servicio;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -33,8 +34,7 @@ public interface ServicioPaciente {
 	void eliminarAnular(Paciente entidad);
 	public void eliminar(Paciente entidad);
 	public void refrescar(Paciente entidad);
-	public List<Paciente> buscarTodos(String claseEntidad2);
 	public void detach(Paciente entidad);
 	public void flush();
-	List<Paciente> obtenerListaCombo(String string);
+	List<Paciente> obtenerListaCombo(String sortField, boolean sortOrder, Map<String, String> filters);
 }

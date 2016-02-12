@@ -1,6 +1,5 @@
 package ec.edu.epn.nutricion.entities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Email;
 
@@ -26,7 +26,7 @@ import org.hibernate.validator.constraints.Email;
  */
 @Entity
 @NamedQuery(name = "Paciente.findAll", query = "SELECT p FROM Paciente p")
-public class Paciente implements Serializable {
+public class Paciente extends EntidadBase {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -35,46 +35,55 @@ public class Paciente implements Serializable {
 	private int idPaciente;
 
 	@Column(name = "APELLIDO")
-	private String apellido;
-	
-	@Email
+	@NotNull(message="El campo apellidos es obligatorio")
+	private String apellidos;
+
+	@Email(message="Correo ingresado incorrecto. Ejemplo: username@ejemplo.com")
 	@Column(name = "CORREO")
 	private String correo;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "FECHA_NACIMIENTO")
+	@NotNull(message="El campo fecha de nacimiento es obligatorio")
 	private Date fechaNacimiento;
 
 	@Column(name = "NOMBRE")
-	private String nombre;
+	@NotNull(message="El campo nombres es obligatorio")
+	private String nombres;
 
 	@Column(name = "ROL")
+	@NotNull(message="El campo rol es obligatorio")
 	private String rol;
-
+	
+	@Column(name = "numero_unico")
+	private String numeroUnico;
+	
 	@Column(name = "SEXO")
+	@NotNull(message="El campo sexo es obligatorio")
 	private String sexo;
 
 	@Column(name = "TELEFONO")
 	private String telefono;
 
 	@Column(name = "CEDULA_IDENTIDAD")
+	@NotNull(message="El campo C.I. es obligatorio")
 	private String cedulaIdentidad;
 
 	// bi-directional many-to-one association to AntecedenteSalud
-	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
-	private List<AntecedenteSalud> listaAntecedenteSaluds;
+	@OneToMany(mappedBy = "paciente", fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	private List<AntecedenteSalud> listaAntecedentesSalud;
 
 	// bi-directional many-to-one association to Cirugia
-	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "paciente", fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 	private List<Cirugia> listaCirugias;
 
 	// bi-directional many-to-one association to HistoriaClinica
-	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
-	private List<HistoriaClinica> listaHistoriaClinicas;
+	@OneToMany(mappedBy = "paciente", fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	private List<HistoriaClinica> listaHistoriasClinicas;
 
 	// bi-directional many-to-one association to PatologiaAsociada
-	@OneToMany(mappedBy = "paciente", fetch=FetchType.EAGER)
-	private List<PatologiaAsociada> listaPatologiaAsociadas;
+	@OneToMany(mappedBy = "paciente", fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	private List<PatologiaAsociada> listaPatologiasAsociadas;
 	// bi-directional one-to-one association to AntecedenteAlimentario
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "paciente", cascade = CascadeType.ALL)
 	private AntecedenteAlimentario antecedenteAlimentario;
@@ -85,40 +94,43 @@ public class Paciente implements Serializable {
 	}
 
 	public AntecedenteSalud addAntecedenteSalud(AntecedenteSalud antecedenteSalud) {
-		getListaAntecedenteSaluds().add(antecedenteSalud);
+		if (getListaAntecedentesSalud() == null)
+			listaAntecedentesSalud = new ArrayList<AntecedenteSalud>();
+		getListaAntecedentesSalud().add(antecedenteSalud);
 		antecedenteSalud.setPaciente(this);
 
 		return antecedenteSalud;
 	}
 
 	public AntecedenteSalud removeAntecedenteSalud(AntecedenteSalud antecedenteSalud) {
-		getListaAntecedenteSaluds().remove(antecedenteSalud);
+		if (getListaAntecedentesSalud() == null)
+			return null;
+		getListaAntecedentesSalud().remove(antecedenteSalud);
 		antecedenteSalud.setPaciente(null);
 
 		return antecedenteSalud;
 	}
 
 	public PatologiaAsociada addPatologiaAsociada(PatologiaAsociada patologiaAsociada) {
-		if (getListaPatologiaAsociadas() != null) {
-			getListaPatologiaAsociadas().add(patologiaAsociada);
-			patologiaAsociada.setPaciente(this);
-		} else {
-			this.listaPatologiaAsociadas = new ArrayList<PatologiaAsociada>();
-			getListaPatologiaAsociadas().add(patologiaAsociada);
-			patologiaAsociada.setPaciente(this);
-		}
-
+		if (getListaPatologiasAsociadas() == null)
+			this.listaPatologiasAsociadas = new ArrayList<PatologiaAsociada>();
+		getListaPatologiasAsociadas().add(patologiaAsociada);
+		patologiaAsociada.setPaciente(this);
 		return patologiaAsociada;
 	}
 
 	public PatologiaAsociada removePatologiaAsociada(PatologiaAsociada patologiaAsociada) {
-		getListaPatologiaAsociadas().remove(patologiaAsociada);
+		if (getListaPatologiasAsociadas() == null)
+			return null;
+		getListaPatologiasAsociadas().remove(patologiaAsociada);
 		patologiaAsociada.setPaciente(null);
 
 		return patologiaAsociada;
 	}
 
 	public Cirugia addCirugia(Cirugia cirugia) {
+		if (getListaCirugias() == null)
+			listaCirugias = new ArrayList<Cirugia>();
 		getListaCirugias().add(cirugia);
 		cirugia.setPaciente(this);
 
@@ -126,6 +138,8 @@ public class Paciente implements Serializable {
 	}
 
 	public Cirugia removeCirugia(Cirugia cirugia) {
+		if (getListaCirugias() == null)
+			return null;
 		getListaCirugias().remove(cirugia);
 		cirugia.setPaciente(null);
 
@@ -133,14 +147,18 @@ public class Paciente implements Serializable {
 	}
 
 	public HistoriaClinica addHistoriaClinica(HistoriaClinica historiaClinica) {
-		getListaHistoriaClinicas().add(historiaClinica);
+		if (getListaHistoriasClinicas() == null)
+			listaHistoriasClinicas = new ArrayList<HistoriaClinica>();
+		getListaHistoriasClinicas().add(historiaClinica);
 		historiaClinica.setPaciente(this);
 
 		return historiaClinica;
 	}
 
 	public HistoriaClinica removeHistoriaClinica(HistoriaClinica historiaClinica) {
-		getListaHistoriaClinicas().remove(historiaClinica);
+		if (getListaHistoriasClinicas() == null)
+			return null;
+		getListaHistoriasClinicas().remove(historiaClinica);
 		historiaClinica.setPaciente(null);
 
 		return historiaClinica;
@@ -153,12 +171,8 @@ public class Paciente implements Serializable {
 		this.idPaciente = idPaciente;
 	}
 
-	public String getApellido() {
-		return apellido;
-	}
-
 	public void setApellido(String apellido) {
-		this.apellido = apellido;
+		this.apellidos = apellido;
 	}
 
 	public String getCorreo() {
@@ -177,12 +191,8 @@ public class Paciente implements Serializable {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
-	public String getNombre() {
-		return nombre;
-	}
-
 	public void setNombre(String nombre) {
-		this.nombre = nombre;
+		this.nombres = nombre;
 	}
 
 	public String getRol() {
@@ -232,13 +242,17 @@ public class Paciente implements Serializable {
 	public void setEdad(int edad) {
 		this.edad = edad;
 	}
-
-	public List<AntecedenteSalud> getListaAntecedenteSaluds() {
-		return listaAntecedenteSaluds;
+	@Override
+	public String toString() {
+		return getApellidos() + " " + getNombres();
 	}
 
-	public void setListaAntecedenteSaluds(List<AntecedenteSalud> listaAntecedenteSaluds) {
-		this.listaAntecedenteSaluds = listaAntecedenteSaluds;
+	public List<AntecedenteSalud> getListaAntecedentesSalud() {
+		return listaAntecedentesSalud;
+	}
+
+	public void setListaAntecedentesSalud(List<AntecedenteSalud> listaAntecedentesSalud) {
+		this.listaAntecedentesSalud = listaAntecedentesSalud;
 	}
 
 	public List<Cirugia> getListaCirugias() {
@@ -249,25 +263,48 @@ public class Paciente implements Serializable {
 		this.listaCirugias = listaCirugias;
 	}
 
-	public List<HistoriaClinica> getListaHistoriaClinicas() {
-		return listaHistoriaClinicas;
+	public List<HistoriaClinica> getListaHistoriasClinicas() {
+		return listaHistoriasClinicas;
 	}
 
-	public void setListaHistoriaClinicas(List<HistoriaClinica> listaHistoriaClinicas) {
-		this.listaHistoriaClinicas = listaHistoriaClinicas;
+	public void setListaHistoriasClinicas(List<HistoriaClinica> listaHistoriasClinicas) {
+		this.listaHistoriasClinicas = listaHistoriasClinicas;
 	}
 
-	public List<PatologiaAsociada> getListaPatologiaAsociadas() {
-		return listaPatologiaAsociadas;
+	public List<PatologiaAsociada> getListaPatologiasAsociadas() {
+		return listaPatologiasAsociadas;
 	}
 
-	public void setListaPatologiaAsociadas(List<PatologiaAsociada> listaPatologiaAsociadas) {
-		this.listaPatologiaAsociadas = listaPatologiaAsociadas;
+	public void setListaPatologiasAsociadas(List<PatologiaAsociada> listaPatologiasAsociadas) {
+		this.listaPatologiasAsociadas = listaPatologiasAsociadas;
+	}
+
+	public String getNumeroUnico() {
+		return numeroUnico;
+	}
+
+	public void setNumeroUnico(String numeroUnico) {
+		this.numeroUnico = numeroUnico;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+
+	public String getNombres() {
+		return nombres;
+	}
+
+	public void setNombres(String nombres) {
+		this.nombres = nombres;
 	}
 
 	@Override
-	public String toString() {
-		return getApellido()+" "+getNombre();
+	public int getId() {
+		return idPaciente;
 	}
-
 }

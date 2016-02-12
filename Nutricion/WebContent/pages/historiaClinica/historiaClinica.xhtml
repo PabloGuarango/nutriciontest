@@ -23,7 +23,7 @@
 						actionListener="#{historiaClinicaBean.crear}" />
 					<p:commandButton value="Consultar" title="Consultar"
 						process="@form" update=":frmHistoriaClinica:panelContenedor growl"
-						icon="ui-icon-document"
+						icon="ui-icon-search"
 						actionListener="#{historiaClinicaBean.consultarHistorias}" />
 					<p:separator />
 					<p:dataTable id="tablaPacientes"
@@ -46,6 +46,13 @@
 								<h:outputText value="Paciente" />
 							</f:facet>
 							<h:outputText value="#{_paciente}" />
+						</p:column>
+						<p:column styleClass="columnaDTCodigo"
+							sortBy="#{_paciente.cedulaIdentidad}" filterBy="#{_paciente.cedulaIdentidad}">
+							<f:facet name="header">
+								<h:outputText value="Identificacion" />
+							</f:facet>
+							<h:outputText value="#{_paciente.cedulaIdentidad}" />
 						</p:column>
 					</p:dataTable>
 				</p:panel>

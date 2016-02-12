@@ -47,7 +47,10 @@
 					navigator="true" pattern="dd-MM-yyyy">
 					<p:ajax process="@this" event="dateSelect"
 						update=":frmHistoriaClinica:informacionPaciente"
-						listener="#{historiaClinicaBean.calcular()}"></p:ajax>
+						listener="#{historiaClinicaBean.calcular()}"/>
+						<p:ajax process="@this" event="change"
+						update=":frmHistoriaClinica:informacionPaciente"
+						listener="#{historiaClinicaBean.calcular()}"/>
 				</p:calendar>
 				<h:outputLabel value="Edad" style="font-weight: bold;" />
 				<h:outputLabel value="#{historiaClinicaBean.paciente.edad}" />
@@ -634,9 +637,9 @@
 			<p:separator />
 			<p:commandButton value="Guardar"
 				action="#{historiaClinicaBean.guardar()}" update="@form"
-				icon="fa-save" />
+				icon="ui-icon-disk" />
 			<p:commandButton value="Cancelar" process="@this"
-				icon="ui-icon-cancel-2" action="#{historiaClinicaBean.cancelar()}"
+				icon="ui-icon-closethick" action="#{historiaClinicaBean.cancelar()}"
 				update="@form" />
 		</p:panel>
 	</p:outputPanel>

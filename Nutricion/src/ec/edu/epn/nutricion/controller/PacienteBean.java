@@ -1,14 +1,14 @@
 package ec.edu.epn.nutricion.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.component.datatable.DataTable;
 
@@ -28,12 +28,12 @@ public class PacienteBean {
 	private boolean editado = false;
 	@PostConstruct
 	public void init() {
-		listaPaciente = servicioPaciente.obtenerListaCombo("Paciente");
+		getListaPaciente();
 	}
 	public String guardarPaciente(){
 		servicioPaciente.insertar(paciente);
 		editado=false;
-		listaPaciente = servicioPaciente.obtenerListaCombo("Paciente");
+		getListaPaciente();
 		return null;
 	}
 	public String crear() {
@@ -65,6 +65,8 @@ public class PacienteBean {
 		this.paciente = paciente;
 	}
 	public List<Paciente> getListaPaciente() {
+		Map<String, String> filters=new HashMap<String, String>();
+		listaPaciente = servicioPaciente.obtenerListaCombo("apellidos", true, filters);
 		return listaPaciente;
 	}
 	public void setListaPaciente(List<Paciente> listaPaciente) {
