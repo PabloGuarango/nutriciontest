@@ -34,14 +34,14 @@
 						paginatorPosition="bottom" style="width:100%"
 						rowsPerPageTemplate="10, 20, 30"
 						selection="#{historiaClinicaBean.paciente}" selectionMode="single"
-						rowKey="#{_paciente.idPaciente}" sortBy="#{_paciente.nombre}">
+						rowKey="#{_paciente.idPaciente}" sortBy="#{_paciente.nombres}">
 
 						<p:column styleClass="columnaDTAccion" headerText="Nº">
 							<h:outputText value="#{secuencialPaciente+1}" />
 						</p:column>
 
 						<p:column styleClass="columnaDTCodigo"
-							sortBy="#{_paciente.apellido}" filterBy="#{_paciente}">
+							sortBy="#{_paciente.apellidos}" filterBy="#{_paciente}">
 							<f:facet name="header">
 								<h:outputText value="Paciente" />
 							</f:facet>

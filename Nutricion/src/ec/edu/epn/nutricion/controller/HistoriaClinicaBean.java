@@ -176,6 +176,7 @@ public class HistoriaClinicaBean {
 		informacionMedicas = new InformacionMedica();
 		antecedenteAlimentario = new AntecedenteAlimentario();
 		historiaClinica = new HistoriaClinica();
+		historiaClinica.setFecha(new Date());
 		listaAlimento = new ArrayList<Alimento>();
 		listaAlimentoNoPreferido = new ArrayList<Alimento>();
 		listaRefrigerios = new ArrayList<Alimento>();
@@ -200,70 +201,81 @@ public class HistoriaClinicaBean {
 		render = "Listado";
 		return "";
 	}
+	public String actualizar(){
+
+		calcular();
+		antecedenteAlimentario.setHabitos("~" + tabaco + "~" + alcohol + "~" + bebidasAzucaradas);
+
+		for (PatologiaAsociada pa : listaPatologiaAsociadaFamiliar) {
+			paciente.addPatologiaAsociada(pa);
+		}
+		for (PatologiaAsociada pa : listaPatologiaAsociadaPaciente) {
+			paciente.addPatologiaAsociada(pa);
+		}
+
+		for (Alimento a : listaAlimento) {
+			
+			antecedenteAlimentario.addAlimento(a);
+		}
+		for (Alimento a : listaAlimentoNoPreferido) {
+			antecedenteAlimentario.addAlimento(a);
+		}
+		for (Alimento a : listaRefrigerios) {
+			antecedenteAlimentario.addAlimento(a);
+		}
+		for (ProblemaGastrointestinal pg : listaProblemaGastrointestinal) {
+			antecedenteAlimentario.addProblemaGastrointestinal(pg);
+		}
+		for (IntoleranciaAlergica ia : listaIntoleranciaAlergia) {
+			antecedenteAlimentario.addIntoleranciaAlergica(ia);
+		}
+		for (Cirugia c : listaCirugia) {
+			paciente.addCirugia(c);
+		}
+		for (Medicamento m : listaMedicamento) {
+			informacionMedicas.addMedicamento(m);
+		}
+		for (SuplementoNutricional sn : listaSuplementoNutricional) {
+			informacionMedicas.addSuplementoNutricional(sn);
+		}
+		paciente.setAntecedenteAlimentario(antecedenteAlimentario);
+		historiaClinica.setPaciente(paciente);
+		historiaClinica.setDatosMedico(informacionMedicas);
+		antropometria.setDatosMedico(informacionMedicas);
+		return null;
+	}
 	public String guardar() {
 		try {
-			calcular();
+			actualizar();
 			antecedenteAlimentario.setHabitos("~" + tabaco + "~" + alcohol + "~" + bebidasAzucaradas);
 
-			for (PatologiaAsociada pa : listaPatologiaAsociadaFamiliar) {
+			for (PatologiaAsociada pa : paciente.getListaPatologiasAsociadas()) {
 				servicioPatologiaAsociada.guardar(pa);
-				pa.setPaciente(paciente);
-				paciente.addPatologiaAsociada(pa);
-			}
-			for (PatologiaAsociada pa : listaPatologiaAsociadaPaciente) {
-				servicioPatologiaAsociada.guardar(pa);
-				pa.setPaciente(paciente);
-				paciente.addPatologiaAsociada(pa);
 			}
 
-			for (Alimento a : listaAlimento) {
+			for (Alimento a : antecedenteAlimentario.getListaAlimentos()) {
 				servicioAlimento.guardar(a);
-				a.setAntecedentesAlimentario(antecedenteAlimentario);
-				antecedenteAlimentario.addAlimento(a);
 			}
-			for (Alimento a : listaAlimentoNoPreferido) {
-				servicioAlimento.guardar(a);
-				a.setAntecedentesAlimentario(antecedenteAlimentario);
-				antecedenteAlimentario.addAlimento(a);
-			}
-			for (Alimento a : listaRefrigerios) {
-				servicioAlimento.guardar(a);
-				a.setAntecedentesAlimentario(antecedenteAlimentario);
-				antecedenteAlimentario.addAlimento(a);
-			}
-			for (ProblemaGastrointestinal pg : listaProblemaGastrointestinal) {
+			
+			for (ProblemaGastrointestinal pg : antecedenteAlimentario.getListaProblemaGastrointestinals()) {
 				servicioProblemaGastrointestinal.guardar(pg);
-				pg.setAntecedentesAlimentario(antecedenteAlimentario);
-				antecedenteAlimentario.addProblemaGastrointestinal(pg);
 			}
-			for (IntoleranciaAlergica ia : listaIntoleranciaAlergia) {
+			for (IntoleranciaAlergica ia : antecedenteAlimentario.getListaIntoleranciaAlergicas()) {
 				servicioIntoleranciaAlergia.guardar(ia);
-				ia.setAntecedentesAlimentario(antecedenteAlimentario);
-				antecedenteAlimentario.addIntoleranciaAlergica(ia);
 			}
-			for (Cirugia c : listaCirugia) {
+			for (Cirugia c : paciente.getListaCirugias()) {
 				servicioCirugia.guardar(c);
-				c.setPaciente(paciente);
-				paciente.addCirugia(c);
 			}
-			for (Medicamento m : listaMedicamento) {
+			for (Medicamento m : informacionMedicas.getListaMedicamentos()) {
 				servicioMedicamento.guardar(m);
-				m.setDatosMedico(informacionMedicas);
-				informacionMedicas.addMedicamento(m);
 			}
-			for (SuplementoNutricional sn : listaSuplementoNutricional) {
+			for (SuplementoNutricional sn : informacionMedicas.getListaSuplementoNutricionales()) {
 				servicioSuplementoNutricional.guardar(sn);
-				sn.setDatosMedico(informacionMedicas);
-				informacionMedicas.addSuplementoNutricional(sn);
 			}
 			servicioAntecedenteAlimentario.guardar(antecedenteAlimentario);
-			paciente.setAntecedenteAlimentario(antecedenteAlimentario);
-			servicioPaciente.insertar(paciente);
+			servicioPaciente.guardar(paciente);
 			servicioDatosMedico.guardar(informacionMedicas);
-			historiaClinica.setPaciente(paciente);
-			historiaClinica.setDatosMedico(informacionMedicas);
 			servicioHistoriaClinica.guardar(historiaClinica);
-			antropometria.setDatosMedico(informacionMedicas);
 			servicioAntropometria.guardar(antropometria);
 			paciente = null;
 			limpiar();

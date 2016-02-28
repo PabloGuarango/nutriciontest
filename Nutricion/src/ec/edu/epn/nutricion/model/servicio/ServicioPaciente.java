@@ -30,6 +30,7 @@ public interface ServicioPaciente {
 	 */
 	Paciente buscarPorId(int id);
 	void insertar(Paciente entidad);
+	void guardar(Paciente entidad);
 	void actualizar(Paciente entidad);
 	void eliminarAnular(Paciente entidad);
 	public void eliminar(Paciente entidad);

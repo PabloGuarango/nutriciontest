@@ -61,5 +61,9 @@ public class ServicioPacienteImpl implements ServicioPaciente {
 	public List<Paciente> obtenerListaCombo(String sortField, boolean sortOrder, Map<String, String> filters) {
 		return pacienteDao.obtenerListaCombo(sortField, sortOrder, filters);
 	}
+	@Override
+	public void guardar(Paciente entidad) {
+		pacienteDao.guardar(entidad);
+	}
 	
 }
